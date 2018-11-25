@@ -1,0 +1,42 @@
+﻿  stdafx.cpp
+  Collision.cpp
+  Command.cpp
+  CyanEngine.cpp
+c:\users\juan\documents\university stuff\game software\isaac-by-xyah\simplegame\cyanengine.cpp(153): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\juan\documents\university stuff\game software\isaac-by-xyah\simplegame\cyanengine.cpp(292): warning C4267: '=': conversion from 'size_t' to 'u_int', possible loss of data
+c:\users\juan\documents\university stuff\game software\isaac-by-xyah\simplegame\cyanengine.cpp(301): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+c:\users\juan\documents\university stuff\game software\isaac-by-xyah\simplegame\cyanengine.cpp(407): warning C4267: 'return': conversion from 'size_t' to 'u_int', possible loss of data
+c:\users\juan\documents\university stuff\game software\isaac-by-xyah\simplegame\cyanengine.cpp(412): warning C4267: 'return': conversion from 'size_t' to 'u_int', possible loss of data
+  Entities.cpp
+  File.cpp
+  Framework.cpp
+  Gamepad.cpp
+  Gameplay.cpp
+  Graphics.cpp
+  Input.cpp
+  LoadPng.cpp
+c:\users\juan\documents\university stuff\game software\isaac-by-xyah\simplegame\loadpng.cpp(800): warning C4334: '<<': result of 32-bit shift implicitly converted to 64 bits (was 64-bit shift intended?)
+c:\users\juan\documents\university stuff\game software\isaac-by-xyah\simplegame\loadpng.cpp(1462): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+c:\users\juan\documents\university stuff\game software\isaac-by-xyah\simplegame\loadpng.cpp(1466): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+c:\users\juan\documents\university stuff\game software\isaac-by-xyah\simplegame\loadpng.cpp(1538): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+c:\users\juan\documents\university stuff\game software\isaac-by-xyah\simplegame\loadpng.cpp(3483): warning C4334: '<<': result of 32-bit shift implicitly converted to 64 bits (was 64-bit shift intended?)
+c:\users\juan\documents\university stuff\game software\isaac-by-xyah\simplegame\loadpng.cpp(3497): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data
+c:\users\juan\documents\university stuff\game software\isaac-by-xyah\simplegame\loadpng.cpp(4338): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+c:\users\juan\documents\university stuff\game software\isaac-by-xyah\simplegame\loadpng.cpp(4386): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+c:\users\juan\documents\university stuff\game software\isaac-by-xyah\simplegame\loadpng.cpp(4466): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+c:\users\juan\documents\university stuff\game software\isaac-by-xyah\simplegame\loadpng.cpp(5409): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
+  Logo.cpp
+  Menu.cpp
+  Physics.cpp
+  Renderer.cpp
+c:\users\juan\documents\university stuff\game software\isaac-by-xyah\simplegame\renderer.cpp(114): warning C4267: '=': conversion from 'size_t' to 'GLint', possible loss of data
+  Scene.cpp
+  SimpleGame.cpp
+  Sound.cpp
+  Sprite.cpp
+  State.cpp
+  Generating Code...
+  Compiling...
+  World.cpp
+  Generating Code...
+  SimpleGame.vcxproj -> C:\Users\Juan\Documents\University Stuff\Game Software\Isaac-by-Xyah\x64\Debug\SimpleGame.exe

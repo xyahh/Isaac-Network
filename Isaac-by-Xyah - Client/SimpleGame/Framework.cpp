@@ -22,16 +22,16 @@ void Framework::Initialize(const STD string & strWindowsTitle, int width, int he
 	// Have To Fix (Later, should make class for this (keyboard or Input)
 	// key Initialize (hard cording)	--------------------------------------------
 
-	Inputs.insert('w');
-	Inputs.insert('a');
-	Inputs.insert('s');
-	Inputs.insert('d');
-	Inputs.insert(VK_UP);
-	Inputs.insert(VK_LEFT);
-	Inputs.insert(VK_RIGHT);
-	Inputs.insert(VK_DOWN);
-	Inputs.insert(VK_SPACE);
-	Inputs.insert(VK_RETURN);
+	Inputs['W'];
+	Inputs['A'];
+	Inputs['S'];
+	Inputs['D'];
+	Inputs[VK_UP];
+	Inputs[VK_LEFT];
+	Inputs[VK_RIGHT];
+	Inputs[VK_DOWN];
+	Inputs[VK_SPACE];
+	Inputs[VK_RETURN];
 
 
 
@@ -56,7 +56,6 @@ void Framework::Initialize(const STD string & strWindowsTitle, int width, int he
 	DWORD dwStyle = GetWindowLong(hWnd, GWL_STYLE);
 	dwStyle &= ~WS_MAXIMIZEBOX & ~WS_THICKFRAME;
 	SetWindowLong(hWnd, GWL_STYLE, dwStyle);
-	glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
 	glewInit();
 }
 
@@ -85,17 +84,6 @@ void Framework::SafeClose()
 
 void Framework::BindFunctions()
 {
-
-	glutKeyboardFunc([](unsigned char key, int x, int y)
-	{
-		Fw.Keyboard(key, x, y, true);
-	});
-
-	glutKeyboardUpFunc([](unsigned char key, int x, int y)
-	{
-		Fw.Keyboard(key, x, y, false);
-	});
-
 	SetConsoleCtrlHandler([](DWORD dw)->BOOL
 	{
 		return Fw.ConsoleHandler(dw);
@@ -138,22 +126,43 @@ void Framework::GetWindowSizef(float * WinWidth, float * WinHeight) const
 	*WinHeight = static_cast<float>(m_WindowHeight);
 }
 
-void Framework::Keyboard(unsigned char key, int x, int y, bool Pressed)
+void Framework::Keyboard()
 {
+	
+	for (auto& i : Inputs)
+	{	
+		if (IS_PRESSED(i.first))
+		{
+			if (!i.second.pressed)
+			{
+				KeyData k;
+				k.key = i.first;
+				k.pressed = true;
+				k.clientNum = 0;
+				NW.sendInput(k);
+				i.second.pressed = true;
+				i.second.released = false;
+				STD cout << k.key << " " << k.pressed << STD endl;
+			}
+			
+		}
+		else if (!i.second.released && i.second.pressed)
+		{
+			KeyData k;
+			k.key = i.first;
+			k.pressed = false;
+			k.clientNum = 0;
+			NW.sendInput(k);
+			i.second.released = true;
+			i.second.pressed = false;
+			STD cout << k.key << " " << k.pressed << STD endl;
+		}
+		
+	}
+	
 	// temparary clientNum is 0, later we should get clientNum from server (Lobby Scene)
-	KeyData k = { key, Pressed, 0 };
-	auto itr = Inputs.find(key);
-	if (itr != Inputs.end()) {
-		NW.sendInput(k);
-	}
-	else {
-		;
-	}
-
-
-	Inputs.find(key);
-	Input input = { key,Pressed };
-	printf("%c %d\n", key, Pressed);
+	
+	
 }
 
 BOOL WINAPI Framework::ConsoleHandler(DWORD dwCtrlType)
@@ -211,11 +220,11 @@ void Framework::Loop()
 	
 	while (m_TimeAccumulator >= UPDATE_TIME)
 	{
+		Keyboard();
 		m_CurrentScene->Update(); 
 		m_TimeAccumulator -= UPDATE_TIME;
 	}
 	m_CurrentScene->Render(m_TimeAccumulator * UPDATE_FREQUENCY);
-
 	if(m_ShiftScene != NULL)
 		ChangeScenes();
 	glutSwapBuffers();

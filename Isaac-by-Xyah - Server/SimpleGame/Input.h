@@ -27,5 +27,5 @@ private:
 
 	STD stack<int>			m_PushedKeys;
 	STD stack<int>			m_ReleasedKeys;
-	STD map<int, id_type>   KeyboardInput;	// Keyboard Key Input (INT VALUE, ID_TYPE COMMANDID)
+	STD multimap<int, id_type>   KeyboardInput;	// Keyboard Key Input (INT VALUE, ID_TYPE COMMANDID)
 };

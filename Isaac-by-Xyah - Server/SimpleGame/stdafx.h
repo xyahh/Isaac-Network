@@ -24,7 +24,7 @@
 
 #include "Math.h"
 
-//#define CYAN_DEBUG_STATES
+#define CYAN_DEBUG_STATES
 #define CYAN_DEBUG_COLLISION
 #define SERVERPORT 9000
 #define BUFSIZE 4096

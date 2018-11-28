@@ -8,7 +8,7 @@ struct Pos {
 
 
 struct KeyData {
-	unsigned char key;
+	int key;
 	bool pressed;
 	int clientNum;
 };

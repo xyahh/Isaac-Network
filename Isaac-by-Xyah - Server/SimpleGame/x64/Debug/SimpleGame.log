@@ -1,8 +1,4 @@
-﻿  Network.cpp
-c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\network.cpp(69): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 2 has type 'LPCTSTR'
-  c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\network.cpp(69): note: consider using '%ls' in the format string
-  c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\network.cpp(69): note: consider using '%lls' in the format string
-  c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\network.cpp(69): note: consider using '%Ls' in the format string
-  c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\network.cpp(69): note: consider using '%ws' in the format string
-c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\network.cpp(98): warning C4091: '': ignored on left of 'DWORD (__cdecl *)(LPVOID)' when no variable is declared
-  SimpleGame.vcxproj -> C:\Users\Juan\Documents\University Stuff\Game Software\Isaac-Online\Isaac-by-Xyah - Server\x64\Debug\SimpleGame.exe
+﻿  CyanEngine.cpp
+c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\cyanengine.cpp(218): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\cyanengine.cpp(379): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+LINK : fatal error LNK1168: cannot open C:\Users\Juan\Documents\University Stuff\Game Software\Isaac-Online\Isaac-by-Xyah - Server\x64\Debug\SimpleGame.exe for writing

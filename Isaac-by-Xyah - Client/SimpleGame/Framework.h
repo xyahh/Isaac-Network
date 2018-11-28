@@ -1,6 +1,14 @@
 #pragma once
 #include <chrono>
 
+#define IS_PRESSED(key) (GetAsyncKeyState(key) & 0x8000)
+
+struct KeyState
+{
+	bool pressed = false;
+	bool released = true;
+};
+
 // Have To Fix (Later, should make class for this (keyboard or Input)
 #pragma pack(1)
 struct Input
@@ -30,7 +38,7 @@ public:
 	void GetWindowSizei(int* WinWidth, int * WinHeight) const;
 	void GetWindowSizef(float * WinWidth, float * WinHeight) const;
 
-	void Keyboard(unsigned char key, int x, int y, bool Pressed);
+	void Keyboard();
 	
 	void Loop();
 	void Run();
@@ -56,7 +64,7 @@ private:
 	Scene*		m_ShiftScene	{ NULL };
 
 	// Have To Fix (Later, should make class for this (keyboard or Input)
-	std::set<unsigned char> Inputs;
+	std::map<int, KeyState> Inputs;
 
 // Framework Timer
 

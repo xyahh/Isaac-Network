@@ -112,14 +112,17 @@ void Cyan::Update()
 		else
 		{
 			Input::PushedKeysData["Player1"].erase(Key.key);
-			GetActorState("Player1").pState->GetInput("Player1").m_ReleasedKeys.push(Key.key);
+			Engine.GetStateType(Engine.GetActorState("Player1").StateID)->GetInput("Player1").m_ReleasedKeys.push(Key.key);
 		}
+		m_Network.InputQueue.pop();
 	}
 
 	for (auto& P : Input::PushedKeysData)
 	{
 		for (auto& K : P.second)
-			GetActorState(P.first).pState->GetInput(P.first).m_PushedKeys.push(K);
+		{
+			Engine.GetStateType(Engine.GetActorState(P.first).StateID)->GetInput(P.first).m_PushedKeys.push(K);
+		}
 	}
 
 

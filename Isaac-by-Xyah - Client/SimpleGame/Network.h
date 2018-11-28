@@ -1,4 +1,4 @@
-
+#pragma once
 #pragma pack(1)
 struct Pos {
    int x;
@@ -11,7 +11,7 @@ struct Pos {
 
 #pragma pack(1)
 struct KeyData {
-	unsigned char key;
+	int key;
 	bool pressed;
 	int clientNum;
 };

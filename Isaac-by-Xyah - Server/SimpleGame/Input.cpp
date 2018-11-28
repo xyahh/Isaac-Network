@@ -7,7 +7,7 @@ STD map<id_type, STD set<int>> Input::PushedKeysData;
 
 void Input::AddKeyboardInput(int value, const id_type & CommandID)
 {
-	KeyboardInput[value] = CommandID;
+	KeyboardInput.emplace(value, CommandID);
 }
 
 void Input::AddPushedKey(int Key)
@@ -24,12 +24,16 @@ void Input::HandleInput(const id_type& ActorID)
 {
 	while(!m_PushedKeys.empty())
 	{
-		Engine.GetCommand(KeyboardInput[m_PushedKeys.top()])->execute(ActorID);
+		auto& p = KeyboardInput.equal_range(m_PushedKeys.top());
+		for (auto Iter = p.first; Iter != p.second; ++Iter)
+			Engine.GetCommand(Iter->second)->execute(ActorID);
 		m_PushedKeys.pop();
 	}
 	while (!m_ReleasedKeys.empty())
 	{
-		Engine.GetCommand(KeyboardInput[m_ReleasedKeys.top()])->release(ActorID);
+		auto& p = KeyboardInput.equal_range(m_ReleasedKeys.top());
+		for(auto Iter = p.first; Iter!=p.second; ++Iter)
+			Engine.GetCommand(Iter->second)->release(ActorID);
 		m_ReleasedKeys.pop();
 	}
 	

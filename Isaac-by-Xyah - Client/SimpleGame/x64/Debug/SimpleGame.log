@@ -1,4 +1,1 @@
-﻿  SimpleGame.cpp
-c:\users\hanul seo\desktop\isaac-network\isaac-by-xyah - client\simplegame\framework.h(7): warning C4099: 'Input': 처음에는 'class'을(를) 사용하여 형식 이름을 표시했는데 이제는 'struct'을(를) 사용하여 표시합니다.
-  c:\users\hanul seo\desktop\isaac-network\isaac-by-xyah - client\simplegame\framework.h(6): note: 'Input' 선언을 참조하십시오.
-  SimpleGame.vcxproj -> C:\Users\hanul Seo\Desktop\Isaac-Network\Isaac-by-Xyah - Client\x64\Debug\SimpleGame.exe
+﻿  SimpleGame.vcxproj -> C:\Users\Juan\Documents\University Stuff\Game Software\Isaac-Online\Isaac-by-Xyah - Client\x64\Debug\SimpleGame.exe

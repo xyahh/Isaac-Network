@@ -1,24 +1,8 @@
-﻿  Collision.cpp
-  Command.cpp
-  CyanEngine.cpp
-c:\users\hanul seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\cyanengine.cpp(194): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\hanul seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\cyanengine.cpp(355): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Framework.cpp
-  Gameplay.cpp
-  Graphics.cpp
-  Input.cpp
-  Logo.cpp
-  Menu.cpp
-  Network.cpp
-c:\users\hanul seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\network.cpp(69): warning C4477: 'printf' : 서식 문자열 '%s'에 'char *' 형식의 인수가 필요하지만 variadic 인수 2의 형식이 'LPCTSTR'입니다.
-  c:\users\hanul seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\network.cpp(69): note: 서식 문자열에서 '%ls'을(를) 사용하는 것이 좋습니다.
-  c:\users\hanul seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\network.cpp(69): note: 서식 문자열에서 '%lls'을(를) 사용하는 것이 좋습니다.
-  c:\users\hanul seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\network.cpp(69): note: 서식 문자열에서 '%Ls'을(를) 사용하는 것이 좋습니다.
-  c:\users\hanul seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\network.cpp(69): note: 서식 문자열에서 '%ws'을(를) 사용하는 것이 좋습니다.
-c:\users\hanul seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\network.cpp(98): warning C4091: '': 변수를 선언하지 않으면 'DWORD (__cdecl *)(LPVOID)' 왼쪽은 무시됩니다.
-  Physics.cpp
-  Scene.cpp
-  SimpleGame.cpp
-  State.cpp
-  코드를 생성하고 있습니다...
-  SimpleGame.vcxproj -> C:\Users\hanul Seo\Desktop\Isaac-Network\Isaac-by-Xyah - Server\x64\Debug\SimpleGame.exe
+﻿  Network.cpp
+c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\network.cpp(69): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 2 has type 'LPCTSTR'
+  c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\network.cpp(69): note: consider using '%ls' in the format string
+  c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\network.cpp(69): note: consider using '%lls' in the format string
+  c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\network.cpp(69): note: consider using '%Ls' in the format string
+  c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\network.cpp(69): note: consider using '%ws' in the format string
+c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\network.cpp(98): warning C4091: '': ignored on left of 'DWORD (__cdecl *)(LPVOID)' when no variable is declared
+  SimpleGame.vcxproj -> C:\Users\Juan\Documents\University Stuff\Game Software\Isaac-Online\Isaac-by-Xyah - Server\x64\Debug\SimpleGame.exe

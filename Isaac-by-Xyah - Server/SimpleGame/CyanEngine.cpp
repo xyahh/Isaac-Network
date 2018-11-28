@@ -102,6 +102,27 @@ void Cyan::Render(float fInterpolation)
 
 void Cyan::Update()
 {
+	//GetInput
+	while(!m_Network.InputQueue.empty())
+	{
+		KeyData& Key = m_Network.InputQueue.front();
+		
+		if(Key.pressed)
+			Input::PushedKeysData["Player1"].emplace(Key.key);
+		else
+		{
+			Input::PushedKeysData["Player1"].erase(Key.key);
+			GetActorState("Player1").pState->GetInput("Player1").m_ReleasedKeys.push(Key.key);
+		}
+	}
+
+	for (auto& P : Input::PushedKeysData)
+	{
+		for (auto& K : P.second)
+			GetActorState(P.first).pState->GetInput(P.first).m_PushedKeys.push(K);
+	}
+
+
 	for (auto& s : m_States)
 	{
 		s.pState->Update(s.ActorID);

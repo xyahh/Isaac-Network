@@ -36,7 +36,10 @@ void Gameplay::Exit()
 
 void Gameplay::Render(float fInterpolation) 
 { 
+	//Graphics :: Render
 	// call Render func 
+	// vector   struct  { Position, 
+
 }
 
 void Gameplay::Update() 

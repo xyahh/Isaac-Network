@@ -4,7 +4,7 @@
 
 void State::Update(const id_type& ActorID)
 {
-	Engine.GetStateType(Engine.GetActorState(ActorID).StateID)->m_Input[ActorID].HandleInput(ActorID);
+	m_Input[ActorID].HandleInput(ActorID);
 }
 
 Input& State::GetInput(const id_type& ActorID)

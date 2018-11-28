@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Network.h"
 
+Network NW;
+
 Network::Network()
 {
 	// 윈속 초기화
@@ -81,7 +83,7 @@ DWORD WINAPI Network::ProcessClient(LPVOID p)
 
 }
 
-void Network::start()
+void Network::recvstart()
 {
 	Arg arg = { this, clientSock };
 
@@ -108,4 +110,10 @@ void Network::testFunc(SOCKET sock)
 
 	}
 	
+}
+
+void Network::sendInput(KeyData k)
+{
+	retval = send(clientSock, (char*)&k, sizeof(k), 0);
+	if (retval == SOCKET_ERROR) err_quit(const_cast<char*>("send()"));
 }

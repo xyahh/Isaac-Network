@@ -155,6 +155,7 @@
     <ClInclude Include="Framework.h" />
     <ClInclude Include="LoadPng.h" />
     <ClInclude Include="Math.h" />
+    <ClInclude Include="Network.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Logo.h" />
     <ClInclude Include="Menu.h" />
@@ -166,6 +167,7 @@
   <ItemGroup>
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="LoadPng.cpp" />
+    <ClCompile Include="Network.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Logo.cpp" />
     <ClCompile Include="Menu.cpp" />

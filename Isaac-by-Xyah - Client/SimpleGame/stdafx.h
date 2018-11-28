@@ -1,10 +1,12 @@
 #pragma once
-
+#pragma comment(lib, "ws2_32")
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include "targetver.h"
 
 #include <stdio.h>
 #include <tchar.h>
-
+#include <winsock2.h>
+#include <stdlib.h>
 #include <Windows.h>
 #include <iostream>
 #include <float.h>
@@ -20,6 +22,11 @@
 
 #include "Math.h"
 
+
+
+#define SERVERIP   "127.0.0.1"
+#define SERVERPORT 9000
+#define BUFSIZE 4096
 //#define CYAN_DEBUG_STATES
 #define CYAN_DEBUG_COLLISION
 

@@ -16,6 +16,26 @@ Framework::~Framework()
 
 void Framework::Initialize(const STD string & strWindowsTitle, int width, int height, int argc, char* argv[])
 {
+
+
+	// Have To Fix (Later, should make class for this (keyboard or Input)
+	// key Initialize (hard cording)	--------------------------------------------
+
+	Inputs.insert('w');
+	Inputs.insert('a');
+	Inputs.insert('s');
+	Inputs.insert('d');
+	Inputs.insert(VK_UP);
+	Inputs.insert(VK_LEFT);
+	Inputs.insert(VK_RIGHT);
+	Inputs.insert(VK_DOWN);
+	Inputs.insert(VK_SPACE);
+	Inputs.insert(VK_RETURN);
+
+
+
+	// -----------------------------------------------------------------------------
+
 	m_WindowTitle = strWindowsTitle;
 	m_WindowWidth = width;
 	m_WindowHeight = height;
@@ -35,7 +55,7 @@ void Framework::Initialize(const STD string & strWindowsTitle, int width, int he
 	DWORD dwStyle = GetWindowLong(hWnd, GWL_STYLE);
 	dwStyle &= ~WS_MAXIMIZEBOX & ~WS_THICKFRAME;
 	SetWindowLong(hWnd, GWL_STYLE, dwStyle);
-
+	glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
 	glewInit();
 }
 
@@ -64,6 +84,17 @@ void Framework::SafeClose()
 
 void Framework::BindFunctions()
 {
+
+	glutKeyboardFunc([](unsigned char key, int x, int y)
+	{
+		Fw.Keyboard(key, x, y, true);
+	});
+
+	glutKeyboardUpFunc([](unsigned char key, int x, int y)
+	{
+		Fw.Keyboard(key, x, y, false);
+	});
+
 	SetConsoleCtrlHandler([](DWORD dw)->BOOL
 	{
 		return Fw.ConsoleHandler(dw);
@@ -104,6 +135,22 @@ void Framework::GetWindowSizef(float * WinWidth, float * WinHeight) const
 {
 	*WinWidth = static_cast<float>(m_WindowWidth);
 	*WinHeight = static_cast<float>(m_WindowHeight);
+}
+
+void Framework::Keyboard(unsigned char key, int x, int y, bool Pressed)
+{
+	auto itr = Inputs.find(key);
+	if (itr != Inputs.end()) {
+		;
+	}
+	else {
+		;
+	}
+
+
+	Inputs.find(key);
+	Input input = { key,Pressed };
+	printf("%c %d\n", key, Pressed);
 }
 
 BOOL WINAPI Framework::ConsoleHandler(DWORD dwCtrlType)

@@ -36,10 +36,11 @@ void Gameplay::Exit()
 
 void Gameplay::Render(float fInterpolation) 
 { 
-
+	// call Render func 
 }
 
 void Gameplay::Update() 
 { 
+	// recv
 	//Engine.Update();
 }

@@ -6,6 +6,7 @@
 #include "Dependencies/GL/glew.h"
 #include "Dependencies/GL/freeglut.h"
 #include "Scene.h"
+#include "Network.h"
 
 Framework Fw;
 
@@ -139,9 +140,11 @@ void Framework::GetWindowSizef(float * WinWidth, float * WinHeight) const
 
 void Framework::Keyboard(unsigned char key, int x, int y, bool Pressed)
 {
+	// temparary clientNum is 0, later we should get clientNum from server (Lobby Scene)
+	KeyData k = { key, Pressed, 0 };
 	auto itr = Inputs.find(key);
 	if (itr != Inputs.end()) {
-		;
+		NW.sendInput(k);
 	}
 	else {
 		;

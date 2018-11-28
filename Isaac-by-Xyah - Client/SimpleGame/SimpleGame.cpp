@@ -10,11 +10,11 @@ int main(int argc, char **argv)
 	// Initialize network socket, make thread for recv func 
 
 
-	Network n;
+	
 	//n.create();
 //	HANDLE hThread = CreateThread(NULL, 0, n.ProcessClient, (LPVOID)n.sock, 0, NULL);
 
-	n.start();
+	NW.recvstart();
 	/* Game Loop */
 	Fw.Initialize("The Binding of Isaac", 800, 800, argc, argv);
 	Fw.ToScene(new Gameplay);

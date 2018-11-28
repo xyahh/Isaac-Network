@@ -34,7 +34,7 @@ protected:
 	void ChangeState(const id_type& ActorID, const id_type& NewStateID);
 	u_int XM_CALLCONV GetVector2Direction(DX FXMVECTOR v);
 	u_int GetActorFacingDirection(const id_type& ActorID);
-	DX XMVECTOR GetDirectionVector(u_int Direction);
+	DX XMVECTOR GetDirectionVector2(u_int Direction);
 
 private:
 
@@ -245,7 +245,7 @@ class ShootingState : public State
 public:
 
 	ShootingState(const id_type& TexID, float ShootingRate, float Force) :
-		TexID(TexID), ShootingRate(ShootingRate), Force(Force)
+		TexID(TexID), GrowingRate(ShootingRate), Force(Force)
 	{
 #ifdef CYAN_DEBUG_STATES
 		printf("ShootingState Created!\n");
@@ -265,10 +265,10 @@ public:
 		STD getline(dataline, data, delim);
 		std::string TexID = data;
 		STD getline(dataline, data, delim);
-		float ShootingRate = STD stof(data);
+		float GrowingRate = STD stof(data);
 		STD getline(dataline, data, delim);
 		float Force = STD stof(data);
-		return new ShootingState(TexID, ShootingRate, Force);
+		return new ShootingState(TexID, GrowingRate, Force);
 	}
 
 	virtual void Enter(const id_type& ActorID);
@@ -277,12 +277,12 @@ public:
 
 
 private:
-	virtual State* Clone() { return new ShootingState(TexID, ShootingRate, Force); }
+	virtual State* Clone() { return new ShootingState(TexID, GrowingRate, Force); }
 	
-	float ShootingTime;
-	float ShootingRate;
+	float Growth;
+	float GrowingRate;
 	float Force;
-	u_int BulletID;
+	id_type BulletID;
 	id_type TexID;
 };
 

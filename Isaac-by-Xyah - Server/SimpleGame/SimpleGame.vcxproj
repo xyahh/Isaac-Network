@@ -163,6 +163,7 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="LoadPng.h" />
     <ClInclude Include="Math.h" />
+    <ClInclude Include="Network.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Logo.h" />
@@ -187,6 +188,7 @@
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="LoadPng.cpp" />
+    <ClCompile Include="Network.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Logo.cpp" />

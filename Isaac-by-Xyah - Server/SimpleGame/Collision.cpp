@@ -20,36 +20,24 @@ DX XMVECTOR XM_CALLCONV Collision::Box::ConvertPosition(DX FXMVECTOR Position) c
 	return TransformedPos;
 }
 
-void BasicCollision::OnCollision(Physics& MyBody, Physics& CollidingBody)
+void XM_CALLCONV BasicCollision::OnCollision(Physics& MyBody, Physics& CollidingBody, DX FXMVECTOR CollisionNormal)
 {
-	CollidingBody.SetPosition(CollidingBody.GetPrevPosition());
-	CollidingBody.SetVelocity(DX Multiply(CollidingBody.GetVelocity(), { 0.f, 0.f, 1.f }));
+	DX XMVECTOR v = DX Add(DX Scale(CollisionNormal, -1.f), DX XMVectorSplatOne());
+	CollidingBody.SetDeltaPosition(DX Multiply(CollidingBody.GetDeltaPosition(), v));
+	CollidingBody.SetVelocity(DX Multiply(CollidingBody.GetVelocity(), v));
 }
 
 
-void ActorCollision::OnCollision(Physics& MyBody, Physics& CollidingBody)
+void XM_CALLCONV ActorCollision::OnCollision(Physics& MyBody, Physics& CollidingBody, DX FXMVECTOR CollisionNormal)
 {
-	CollidingBody.SetPosition(CollidingBody.GetPrevPosition());
-	CollidingBody.SetVelocity(DX Multiply(CollidingBody.GetVelocity(), { 0.f, 0.f, 1.f }));
+	//BasicCollision::OnCollision(MyBody, CollidingBody, CollisionNormal)
 }
 
 
-void VentCollision::OnCollision(Physics& MyBody, Physics& CollidingBody)
+void XM_CALLCONV BulletCollision::OnCollision(Physics & MyBody, Physics & CollidingBody, DX FXMVECTOR CollisionNormal)
 {
-	//CollidedEntity->SetForce({ 0.f, 0.f, 1'000.f });
-}
-
-void BulletCollision::OnCollision(Physics & MyBody, Physics & CollidingBody)
-{
-	id_type ActorID = Engine.FindActor(CollidingBody);
-	u_int ObjectID = Engine.FindObject(MyBody);
-	if (!ActorID.empty())
-	{
-		if (Engine.GetActorTeam(ActorID) != Engine.GetObjectTeam(ObjectID))
-		{
-			Engine.GetActorGraphics(ActorID).SetColor(1.f, 0.f, 0.f, 1.f);
-			Engine.DeleteObject(ObjectID);
-
-		}
-	}
+	//id_type ActorID = Engine.FindActor(CollidingBody);
+	//id_type ObjectID = Engine.FindObject(MyBody);
+	//if (ActorID.empty()) 
+	//	Engine.DeleteObject(ObjectID);
 }

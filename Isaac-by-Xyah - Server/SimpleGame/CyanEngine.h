@@ -5,6 +5,7 @@
 #include "Entities.h"
 #include "State.h"
 #include "Sound.h"
+#include "Network.h"
 
 /* Component IDs ------------- */
 #define SOUNDS		0x01
@@ -14,6 +15,11 @@
 #define COMMANDS	0x10
 #define TEXTURES	0x20
 /*----------------------------*/
+
+enum EVENT
+{
+	EFFECT_DELETE
+};
 
 
 class Cyan
@@ -38,33 +44,15 @@ public:
 	/*--------------------------*/
 
 	//I don't like these Functions
-	id_type FindActor(const Physics& physics) const
+	id_type FindEntity(const Physics& physics) const
 	{
 		for (u_int i = 0; i < m_Physics.size(); ++i)
 			if (&physics == &m_Physics[i])
-				for (auto& l : m_ActorLocator)
+				for (auto& l : m_EntityLocator)
 					if (i == l.second.PhysicsIndex)
 						return l.first;
 		return id_type("");
 	}
-	u_int FindObject(const Physics& physics) const
-	{
-		for (u_int i = 0; i < m_Physics.size(); ++i)
-			if (&physics == &m_Physics[i])
-				for (auto& l : m_ObjectLocator)
-					if (i == l.second.PhysicsIndex)
-						return l.first;
-		return u_int();
-	}
-	u_int GetActorTeam(const id_type& ID) const
-	{
-		return m_ActorLocator.at(ID).Team;
-	}
-	u_int GetObjectTeam(u_int ID) const
-	{
-		return m_ObjectLocator.at(ID).Team;
-	}
-
 
 	/*---File Readers-----------*/
 	void AddSoundsByFile(const STD string & filename, char delimiter = ',', bool ignore_first_row = true);
@@ -90,7 +78,7 @@ public:
 
 	void AddNonActorState(const id_type& AssignID);
 
-	u_int AddObject();
+	id_type AddObject(const id_type& ObjectType);
 	u_int AddEffect();
 	void AddActor(const id_type& AssignID, const id_type& StartStateID);
 	void AddVisual(const id_type& AssignID, WORD config = 0);
@@ -99,13 +87,11 @@ public:
 	void AddTexture(const id_type& TexID, const STD string& ImagePath);
 	
 	VisualGraphics&	GetVisualGraphics(const id_type& ID);
-	ActorGraphics&	GetActorGraphics(const id_type& ID);
-	ObjectGraphics&	GetObjectGraphics(u_int ID);
+	Graphics&		GetEntityGraphics(const id_type& ID);
 	EffectGraphics& GetEffect(u_int ID);
 	u_int			GetTexture(const id_type& ID);
 
-	Physics& GetActorPhysics(const id_type& ID);
-	Physics& GetObjectPhysics(u_int ID);
+	Physics& GetEntityPhysics(const id_type& ID);
 	
 	void UpdateState(const id_type& ActorID, const id_type& NewStateID);
 
@@ -114,14 +100,9 @@ public:
 	Sound&	 GetSound(const id_type& ID);
 	State*	 GetStateType(const id_type& ID);
 
+	void AddEvent(u_int Event, const id_type& ID);
+
 	void DeleteEffect(u_int EffectID);
-	void DeleteActor(const id_type& ActorID);
-	void DeleteVisual(const id_type& VisualID);
-	void DeleteObject(u_int ObjectID);
-
-	u_int ActorCount() const;
-	u_int VisualCount() const;
-
 	void DeleteComponents(WORD Components = SOUNDS | STATES | ENTITIES | VISUALS | COMMANDS | TEXTURES);
 	/*--------------------------*/
 
@@ -131,25 +112,24 @@ private:
 	bool Initialize(int WindowWidth, int WindowHeight);
 	void Destroy();
 
+	void HandleEvents();
 	//Done at the end of Cycles to avoid Dangling pointers / skipped items in loops
-	void ProcessDeletionRequests(); 
 	void ProcessUpdatedStates(); 
 
 	StateStruct*		ActorState{ nullptr };
 	id_type				NextStateID;
 
 private:
+	Service<STD pair<u_int, id_type>>	m_Events;
 	
-	STD set<u_int>					m_ObjectDeletionRequests;
 
 	/*-------------------------------------------*/
 	/* Services								     */
 	/*-------------------------------------------*/
 	Service<u_int>					m_Textures;
-	Service<ActorGraphics>			m_ActorGraphics;
+	Service<Graphics>				m_Graphics;
 	Service<Physics>				m_Physics;
 	Service<StateStruct>			m_States;
-	Service<ObjectGraphics>			m_ObjectGraphics;
 	Service<EffectGraphics>			m_EffectGraphics;
 	Service<VisualGraphics>			m_VisualGraphics;
 	Service<Command*>				m_Commands;
@@ -161,14 +141,13 @@ private:
 	/* Service Locators                          */
 	/*-------------------------------------------*/
 	ServiceLocator<id_type, u_int>  m_TextureLocator;
-	ServiceLocator<id_type, Actor>	m_ActorLocator;
-	ServiceLocator<u_int,  Object>	m_ObjectLocator; 
+	ServiceLocator<id_type, Entity>	m_EntityLocator;
 	ServiceLocator<u_int,	u_int>	m_EffectLocator;
 	ServiceLocator<id_type, u_int>	m_VisualLocator;
 	ServiceLocator<id_type, u_int>	m_CommandLocator;
 	ServiceLocator<id_type, u_int>	m_SoundLocator;
 	ServiceLocator<id_type, u_int>	m_StateTypeLocator;
-
+	Network	m_Network;
 	
 };
 

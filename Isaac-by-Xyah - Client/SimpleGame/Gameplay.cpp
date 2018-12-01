@@ -2,48 +2,49 @@
 #include "Gameplay.h"
 #include "Framework.h"
 #include "Renderer.h"
+#include "Network.h"
 
 void Gameplay::Init()
 {
-	//Engine.ReserveObjects(4, 100, 1, 10); 
-	//Engine.AddSoundsByFile("./Resources/Init/Sounds.csv");
-	//Engine.AddTexturesByFile("./Resources/Init/Textures.csv");
-	////Engine.GetSound("Main").Play();
-	//Gamepad1.Connect();
-	//Engine.AddCommandsByFile("./Resources/Init/Commands.csv");
-	//
-	//Engine.AddCommand("Zoom", new FxCommand([](const id_type& ActorID)
-	//{
-	//	static bool ZoomedOut = true;
-	//	if (ZoomedOut) World::SetScale(0.01f, 1);
-	//	else World::SetScale(0.025f, 1);
-	//	ZoomedOut = !ZoomedOut;
-	//}));
-	//
-	//Engine.AddStatesByFile("./Resources/Init/States.csv");
-	//Engine.AddInputsByFile("./Resources/Init/Input.csv");
-	//Engine.AddActorsByFile("./Resources/Init/Actors.csv");
-	//
-	///* Visuals */
-	//Engine.AddVisual("Map", PHYSICAL_UNITS | BACK_DRAW);
-	//Engine.GetVisualGraphics("Map").SetTexID("Map");
-	//Engine.GetVisualGraphics("Map").SetSize(20.f, 20.f);
 }
 
 void Gameplay::Exit()
 {
 }
 
+
 void Gameplay::Render(float fInterpolation) 
 { 
-	//Graphics :: Render
-	// call Render func 
-	// vector   struct  { Position, 
+
+	int Size = 0;
+
+	NW.retval = recv(NW.clientSock, (char*)&Size, sizeof(int ), 0);
+	if (NW.retval == SOCKET_ERROR) {
+		NW.err_display(const_cast<char*>("recv()"));
+		exit(0);
+	}
+
+	NW.Positions.resize(Size);
+	NW.retval = NW.recvn(NW.clientSock, (char*)&NW.Positions[0], sizeof(DX XMVECTOR) * NW.Positions.size(), 0);
+	if (NW.retval == SOCKET_ERROR) {
+		NW.err_display(const_cast<char*>("recv()"));
+		exit(0);
+	}
+
+	for (size_t i = 0; i < NW.Positions.size(); ++i) {
+		NW.RenderDevice.DrawTexRect(
+			NW.Positions[i],
+			{ 100.f, 100.f },
+			{ 1.f, 1.f, 1.f, 1.f },
+			NW.TEX
+		);
+	}
 
 }
 
 void Gameplay::Update() 
 { 
+	
 	// recv
 	//Engine.Update();
 }

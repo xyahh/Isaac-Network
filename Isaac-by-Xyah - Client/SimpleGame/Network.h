@@ -1,4 +1,5 @@
 #pragma once
+#include "Renderer.h"
 #pragma pack(1)
 struct Pos {
    int x;
@@ -9,13 +10,11 @@ struct Pos {
 
 
 
-#pragma pack(1)
 struct KeyData {
 	int key;
-	bool pressed;
 	int clientNum;
+	bool pressed;
 };
-#pragma pack()
 
 class Network
 {
@@ -25,15 +24,19 @@ public:
 
    void err_quit(char *msg);
 	void err_display(char *msg);
-	static DWORD WINAPI ProcessClient(LPVOID arg);
-	void recvstart();
-	void testFunc(SOCKET sock);
+	//static DWORD WINAPI ProcessClient(LPVOID arg);
+	//void recvstart();
+	//void testFunc(SOCKET sock);a
 	void sendInput(KeyData k);
-private:
-	SOCKET clientSock;
+	STD vector<DX XMVECTOR> Positions;
 
-   int retval;
-   Pos v[3] = { 0, };
+	void Init();
+
+	Renderer RenderDevice;
+	int TEX;
+	SOCKET clientSock;
+	int retval;
+	int recvn(SOCKET s, char * buf, int len, int flags);
 
 };
 

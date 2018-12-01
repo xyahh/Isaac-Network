@@ -7,7 +7,7 @@
 #include "Dependencies/GL/freeglut.h"
 #include "Scene.h"
 #include "Network.h"
-
+#include "Renderer.h"
 Framework Fw;
 
 Framework::~Framework()
@@ -57,6 +57,7 @@ void Framework::Initialize(const STD string & strWindowsTitle, int width, int he
 	dwStyle &= ~WS_MAXIMIZEBOX & ~WS_THICKFRAME;
 	SetWindowLong(hWnd, GWL_STYLE, dwStyle);
 	glewInit();
+	
 }
 
 void Framework::Fullscreen()
@@ -128,41 +129,43 @@ void Framework::GetWindowSizef(float * WinWidth, float * WinHeight) const
 
 void Framework::Keyboard()
 {
-	
-	for (auto& i : Inputs)
-	{	
-		if (IS_PRESSED(i.first))
+	while (1) 
+	{
+
+		for (auto& i : Inputs)
 		{
-			if (!i.second.pressed)
+			if (IS_PRESSED(i.first))
+			{
+				if (!i.second.pressed)
+				{
+					KeyData k;
+					k.key = i.first;
+					k.pressed = true;
+					k.clientNum = 0;
+					NW.sendInput(k);
+					i.second.pressed = true;
+					i.second.released = false;
+					STD cout << k.key << " " << k.pressed << STD endl;
+				}
+
+			}
+			else if (!i.second.released && i.second.pressed)
 			{
 				KeyData k;
 				k.key = i.first;
-				k.pressed = true;
+				k.pressed = false;
 				k.clientNum = 0;
 				NW.sendInput(k);
-				i.second.pressed = true;
-				i.second.released = false;
-				STD cout << k.key << " " << k.pressed << STD endl;
+				i.second.released = true;
+				i.second.pressed = false;
+				STD cout << k.key << " " << k.pressed << " " << k.clientNum <<  STD endl;
 			}
-			
+
 		}
-		else if (!i.second.released && i.second.pressed)
-		{
-			KeyData k;
-			k.key = i.first;
-			k.pressed = false;
-			k.clientNum = 0;
-			NW.sendInput(k);
-			i.second.released = true;
-			i.second.pressed = false;
-			STD cout << k.key << " " << k.pressed << STD endl;
-		}
-		
+
+		// temparary clientNum is 0, later we should get clientNum from server (Lobby Scene)
+
 	}
-	
-	// temparary clientNum is 0, later we should get clientNum from server (Lobby Scene)
-	
-	
 }
 
 BOOL WINAPI Framework::ConsoleHandler(DWORD dwCtrlType)
@@ -191,7 +194,6 @@ void Framework::ChangeScenes()
 
 void Framework::Run()
 {
-
 	Scene::m_Framework = this;
 	BindFunctions();
 	ChangeScenes();
@@ -204,6 +206,12 @@ void Framework::Run()
 	glDepthRange(NEAREST, FARTHEST);
 
 	ResetClock();
+
+	NW.Init();
+
+	HANDLE hThread = CreateThread(NULL, 0, [](LPVOID)->DWORD { Fw.Keyboard(); return 0; }, 0, 0, NULL);
+	CloseHandle(hThread);
+
 	glutMainLoop();
 }
 
@@ -212,7 +220,7 @@ void Framework::Loop()
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClearDepth(FARTHEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	
 	m_CurrentTime = Time::now();
 	m_TimeFrame = TimeDuration(m_CurrentTime - m_PreviousTime).count();
 	m_PreviousTime = m_CurrentTime;
@@ -220,7 +228,6 @@ void Framework::Loop()
 	
 	while (m_TimeAccumulator >= UPDATE_TIME)
 	{
-		Keyboard();
 		m_CurrentScene->Update(); 
 		m_TimeAccumulator -= UPDATE_TIME;
 	}

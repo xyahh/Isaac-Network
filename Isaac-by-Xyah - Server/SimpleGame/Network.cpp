@@ -1,8 +1,10 @@
 #include "stdafx.h"
 #include "Network.h"
 
-#define CLIENTSNUM 1
+#define CLIENTSNUM 2
 using namespace std;
+
+Network NW;
 
 Network::Network()
 {
@@ -70,9 +72,9 @@ void Network::err_display(char *msg)
 	LocalFree(lpMsgBuf);
 }
 
-void Network::acceptClients()
+void Network::AcceptClients()
 {
-	while (clientNum < CLIENTSNUM)
+	while (EnteredClientsNum < CLIENTSNUM)
 	{
 
 		// 데이터 통신에 사용할 변수
@@ -91,34 +93,59 @@ void Network::acceptClients()
 			continue;
 		}
 		//cout << endl << "FileSender 접속 : IP 주소 = " << inet_ntoa(clientaddr.sin_addr) << ", 포트 번호= " << ntohs(clientaddr.sin_port) << endl;
-		Arg arg = { this, clientNum };
+		//Arg arg = { this, clientNum };
 //		CreateThread(NULL, 0, this->ServerMain, (LPVOID)clientNum, 0, NULL);
 		// 벡터에다 client_sock 넣어주기 
 		ClientSockets.emplace_back(client_sock);
 		PTHREAD_START_ROUTINE;
-		HANDLE hThread = CreateThread(NULL, 0, &ServerMain, &arg, 0, NULL);
+		HANDLE hThread = CreateThread(NULL, 0, [](LPVOID)->DWORD {NW.testFunc(); return 0; }, 0, 0, NULL);
 	
 		CloseHandle(hThread);
 		//clientNum++;
-		cout << clientNum++ << endl;
+		cout << EnteredClientsNum++ << endl;
 	}
 
 }
 
-
-DWORD WINAPI Network::ServerMain(LPVOID p)
+void Network::SendRenderData()
 {
+	for (auto client_sock : ClientSockets) {
+		SOCKADDR_IN clientaddr;
+		int addrlen;
+		addrlen = sizeof(clientaddr);
+		getpeername(client_sock, (SOCKADDR *)&clientaddr, &addrlen);
 
-	Arg* pArg = (Arg*)p;
-	pArg->p->testFunc(pArg->clientnum);
-	return 0;
+		int vecSize = NW.Positions.size();
 
+		retval = send(client_sock, (char*)&vecSize, sizeof(vecSize), 0);
+		if (retval == SOCKET_ERROR) err_quit(const_cast<char*>("send()"));
+
+		retval = send(client_sock, (char*)&NW.Positions[0], sizeof(DX XMVECTOR) * NW.Positions.size(), 0);
+		if (retval == SOCKET_ERROR) err_quit(const_cast<char*>("send()"));
+
+		//      retval = send(client_sock, (char*)&RenderDataPacket, sizeof(RenderDataPacket), 0);
+		//      if (retval == SOCKET_ERROR) err_quit(const_cast<char*>("send()"));
+
+		   //   retval = send(client_sock, (char*)&RenderDataPacket, sizeof(RenderDataPacket), 0);
+		   //   if (retval == SOCKET_ERROR) err_quit(const_cast<char*>("send()"));
+
+	}
+	Positions.clear();
 }
 
-void Network::testFunc(int num)
+
+//DWORD WINAPI Network::ServerMain(LPVOID p)
+//{
+//
+//	Arg* pArg = (Arg*)p;
+//	pArg->p->testFunc(pArg->clientnum);
+//	return 0;
+//
+//}
+
+void Network::testFunc()
 {
-	int clientNum = (int)num;
-	SOCKET client_sock = ClientSockets[clientNum];
+	SOCKET client_sock = ClientSockets[CurrentClientNum];
 	while (1) {
 		SOCKADDR_IN clientaddr;
 		int addrlen;
@@ -142,5 +169,26 @@ void Network::testFunc(int num)
 
 	// closesocket()
 	closesocket(client_sock);
+
+}
+
+int Network::recvn(SOCKET s, char * buf, int len, int flags)
+{
+
+	int received;
+	char *ptr = buf;
+	int left = len;
+
+	while (left > 0) {
+		received = recv(s, ptr, left, flags);
+		if (received == SOCKET_ERROR)
+			return SOCKET_ERROR;
+		else if (received == 0)
+			break;
+		left -= received;
+		ptr += received;
+	}
+
+	return (len - left);
 
 }

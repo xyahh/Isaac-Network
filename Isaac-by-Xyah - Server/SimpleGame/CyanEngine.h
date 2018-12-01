@@ -147,7 +147,7 @@ private:
 	ServiceLocator<id_type, u_int>	m_CommandLocator;
 	ServiceLocator<id_type, u_int>	m_SoundLocator;
 	ServiceLocator<id_type, u_int>	m_StateTypeLocator;
-	Network	m_Network;
+	//Network	m_Network;
 };
 
 extern Cyan Engine;

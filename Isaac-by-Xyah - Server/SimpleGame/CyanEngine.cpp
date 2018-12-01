@@ -2,13 +2,13 @@
 #include "CyanEngine.h"
 #include "Renderer.h"
 #include "File.h"
-
+#include "World.h"
 Cyan Engine;
 
 /* Engine Core Functions -------------------------------------------------------------*/
 bool Cyan::Initialize(int WindowWidth, int WindowHeight)
 {
-	m_Network.acceptClients();
+	NW.AcceptClients();
 	Sound::Initialize();
 	return RenderDevice.Initialize(WindowWidth, WindowHeight);
 }
@@ -93,8 +93,21 @@ void Cyan::Render(float fInterpolation)
 	for (auto& g : m_VisualGraphics)
 		g.Render();
 
-	for (auto& g : m_Graphics)
+	for (auto& g : m_Graphics) 
+	{
 		g.Render(fInterpolation);
+		Physics& ActorPhysics = Engine.GetEntityPhysics(g.m_Actor);
+		DX XMVECTOR Position = DX Add
+		(
+			DX Scale(ActorPhysics.GetPosition(), fInterpolation),
+			DX Scale(ActorPhysics.GetPrevPosition(), 1.f - fInterpolation)
+		);
+
+		World::Convert(Position);
+		NW.Positions.emplace_back(Position);
+	}
+	NW.SendRenderData();
+		//g.Render(fInterpolation);
 
 	for (auto& e : m_EffectGraphics)
 		e.Render(fInterpolation);
@@ -103,9 +116,9 @@ void Cyan::Render(float fInterpolation)
 void Cyan::Update()
 {
 	//GetInput
-	while(!m_Network.InputQueue.empty())
+	while(!NW.InputQueue.empty())
 	{
-		KeyData& Key = m_Network.InputQueue.front();
+		KeyData& Key = NW.InputQueue.front();
 		
 		if(Key.pressed)
 			Input::PushedKeysData["Player1"].emplace(Key.key);
@@ -114,7 +127,7 @@ void Cyan::Update()
 			Input::PushedKeysData["Player1"].erase(Key.key);
 			Engine.GetStateType(Engine.GetActorState("Player1").StateID)->GetInput("Player1").m_ReleasedKeys.push(Key.key);
 		}
-		m_Network.InputQueue.pop();
+		NW.InputQueue.pop();
 	}
 
 	for (auto& P : Input::PushedKeysData)

@@ -8,9 +8,9 @@ struct Pos {
 
 
 struct KeyData {
-	int key;
-	bool pressed;
-	int clientNum;
+	int key = 0;
+	int clientNum = 0;
+	bool pressed = false;
 };
 
 
@@ -20,26 +20,28 @@ public:
 	Network();
 	~Network();
 
+	static Network GameNetwork;
+
 	void err_quit(char *msg);
 	void err_display(char *msg);
 
-	void acceptClients();
-	static DWORD WINAPI ServerMain(LPVOID p);
-	void testFunc(int num);
-
+	void AcceptClients();
+	void SendRenderData();
+//	DWORD WINAPI ServerMain(LPVOID p);
+	void testFunc();
+	STD vector<DX XMVECTOR> Positions;
 	STD queue<KeyData> InputQueue;
+	//STD vector<STD queue<KeyData>> InputQueues;
+	int recvn(SOCKET s, char * buf, int len, int flags);
 private:
-	int clientNum = 0;
+	int CurrentClientNum = 0;
+	int EnteredClientsNum = 0;
+	STD vector<SOCKET> ClientSockets;
 
 	 int retval = 0;
-	 Pos v[3] = { 0, };
 	 SOCKET listen_sock;
-	 STD vector<SOCKET> ClientSockets;
-
 };
 
 
-struct Arg {
-	Network* p;
-	int clientnum;
-};
+
+extern Network NW;

@@ -2,7 +2,6 @@
 #include "Network.h"
 
 #define CLIENTSNUM 2
-using namespace std;
 
 Network NW;
 
@@ -102,7 +101,7 @@ void Network::AcceptClients()
 	
 		CloseHandle(hThread);
 		//clientNum++;
-		cout << EnteredClientsNum++ << endl;
+		STD cout << EnteredClientsNum++ << STD endl;
 	}
 
 }
@@ -163,7 +162,7 @@ void Network::testFunc()
 		}
 		// 스레드별로 변수 필요함 (순서 0, 1, 2 처럼) = clientNum 
 		// 받은 key 큐에다 넣기 
-		cout << k.key << "\t" << k.pressed << "\t" << k.clientNum << endl;
+		STD cout << k.key << "\t" << k.pressed << "\t" << k.clientNum << STD endl;
         InputQueue.push(k);
 	}
 

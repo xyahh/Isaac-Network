@@ -8,7 +8,14 @@ public:
 	BasicCollision() {}
 	virtual ~BasicCollision() {}
 
-	virtual void XM_CALLCONV OnCollision(Physics& MyBody, Physics& CollidingBody, DX FXMVECTOR CollisionNormal);
+	virtual void XM_CALLCONV OnCollision
+	(
+		size_t MyID,
+		Physics* MyBody,
+		size_t CollidingID,
+		Physics* CollidingBody,
+		DX FXMVECTOR CollisionNormal
+	);
 
 private:
 };
@@ -19,47 +26,81 @@ public:
 	ActorCollision() {}
 	virtual ~ActorCollision() {}
 
-	virtual void XM_CALLCONV OnCollision(Physics& MyBody, Physics& CollidingBody, DX FXMVECTOR CollisionNormal);
-
+	virtual void XM_CALLCONV OnCollision
+	(
+		size_t MyID,
+		Physics* MyBody,
+		size_t CollidingID,
+		Physics* CollidingBody,
+		DX FXMVECTOR CollisionNormal
+	);
 };
-class BulletCollision : public BasicCollision
+
+class ProjectileCollision : public BasicCollision
 {
 public:
-	BulletCollision() {}
-	virtual	~BulletCollision() {}
+	ProjectileCollision() {}
+	virtual	~ProjectileCollision() {}
 
-	virtual void XM_CALLCONV OnCollision(Physics& MyBody, Physics& CollidingBody, DX FXMVECTOR CollisionNormal);
+	virtual void XM_CALLCONV OnCollision
+	(
+		size_t MyID,
+		Physics* MyBody,
+		size_t CollidingID,
+		Physics* CollidingBody,
+		DX FXMVECTOR CollisionNormal
+	);
+};
+
+class StructureCollision : public BasicCollision
+{
+public:
+	StructureCollision() {}
+	virtual	~StructureCollision() {}
+
+	virtual void XM_CALLCONV OnCollision
+	(
+		size_t MyID,
+		Physics* MyBody, 
+		size_t CollidingID,
+		Physics* CollidingBody, 
+		DX FXMVECTOR CollisionNormal
+	);
 };
 
 
 NS_COLLISION_START
 
-static BasicCollision	Basic;
-static ActorCollision	Actor;
-static BulletCollision	Bullet;
+static BasicCollision		Basic;
+static ActorCollision		Actor;
+static ProjectileCollision	Projectile;
+static StructureCollision	Structure;
 
-class Box
+class BBox
 	{
 	public:
-		Box() :
+		BBox() :
 			Size(0.f, 0.f, 0.f) {}
 
 		void XM_CALLCONV SetDimensions(DX FXMVECTOR v);
 		DX XMVECTOR XM_CALLCONV GetDimensions() const;
-
-		friend void XM_CALLCONV GetExtents(DX XMVECTOR* Min, DX XMVECTOR* Max, DX FXMVECTOR position, const Box& box);
-		DX XMVECTOR XM_CALLCONV ConvertPosition(DX FXMVECTOR Position) const;
+		friend void XM_CALLCONV GetExtents(DX XMVECTOR* Min, DX XMVECTOR* Max, DX FXMVECTOR position, const BBox& box);
 
 	private:
 		DX XMFLOAT3	Size;
 	};
 
-inline void XM_CALLCONV GetExtents(DX XMVECTOR* Min, DX XMVECTOR* Max, DX FXMVECTOR position, const Box& box)
+inline DX XMVECTOR XM_CALLCONV GetBBoxCenter(DX FXMVECTOR ObjectPosition, float BBoxHeight)
+{
+	return DX Add(ObjectPosition, {0.f, 0.f, BBoxHeight * 0.5f});
+}
+
+inline void XM_CALLCONV GetExtents(DX XMVECTOR* Min, DX XMVECTOR* Max, DX FXMVECTOR position, const BBox& box)
 {
 	DX XMVECTOR Half = DX Scale({ box.Size.x, box.Size.y }, 0.5f);
 	*Max = DX Add(position, Half);
 	*Min = DX Subtract(position, Half);
-	DX Add(Max, { 0.f, 0.f, box.Size.z });
+	*Max = DX Add(*Max, { 0.f, 0.f, box.Size.z });
 }
 
 inline bool XM_CALLCONV HandleCollision(DX FXMVECTOR A_Min, DX FXMVECTOR A_Max, DX FXMVECTOR B_Min, DX GXMVECTOR B_Max)

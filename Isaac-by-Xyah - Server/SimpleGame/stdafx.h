@@ -14,27 +14,22 @@
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 
+#include <functional>
 #include <sstream>
 #include <string>
 #include <vector>
+#include <queue>
 #include <stack>
 #include <set>
 #include <map>
-#include <queue>
 
 #include "Math.h"
 
 #define CYAN_DEBUG_STATES
 #define CYAN_DEBUG_COLLISION
+
 #define SERVERPORT 9000
 #define BUFSIZE 4096
-enum DIRECTION
-{
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT
-};
 
 /* Depth Test */
 #define FARTHEST 1.f
@@ -42,15 +37,20 @@ enum DIRECTION
 
 #define	STD		std::
 
-constexpr float UPDATE_FREQUENCY	{ 120.f };
-constexpr float UPDATE_TIME			{ 1.f / UPDATE_FREQUENCY };
-
-using id_type = STD string;
+constexpr float UPDATE_FREQUENCY{ 120.f };
+constexpr float UPDATE_TIME{ 1.f / UPDATE_FREQUENCY };
 
 template<class T>
-inline u_int LastIdx(STD vector<T> v)
+inline size_t Last(STD vector<T> v)
 {
-	return static_cast<u_int>(v.size() - 1);
+	return v.size() - 1;
+}
+
+template<class T>
+void SafeDelete(T*& Object)
+{
+	delete Object;
+	Object = NULL;
 }
 
 /* Core */
@@ -64,11 +64,10 @@ class Gamepad;
 class Renderer;
 
 /* Components */
-class ActorGraphics;
-class VisualGraphics;
 class Graphics;
 class Physics;
 class Input;
+class Sprite;
 
 namespace FMOD
 {

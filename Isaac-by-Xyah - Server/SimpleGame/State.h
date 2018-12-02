@@ -1,68 +1,54 @@
 #pragma once
 #include "Input.h"
 
-/*---------------------------------------------------------------------------------------------*/
-class StateStruct
-{
-public:
-	StateStruct(const id_type& ActorID, const id_type& StateID, State* state) :
-		ActorID(ActorID), StateID(StateID), pState(state) {}
-
-	id_type ActorID;
-	id_type StateID;
-	State*	pState;
-};
-/*---------------------------------------------------------------------------------------------*/
-
-
 class State
 {
 	friend Cyan;
 
 public:
+
 	State() {}
 	virtual	~State() {}
 
-	virtual void Enter(const id_type& ActorID) = 0;
-	virtual void Exit(const id_type& ActorID) = 0;
-	virtual void Update(const id_type& ActorID);
-
-	Input&  GetInput(const id_type& ActorID);
+	virtual void Enter(size_t Index) = 0;
+	virtual void Exit(size_t Index) = 0;
+	virtual void Update(size_t Index) = 0;
+	virtual State* Make() = 0;
 
 protected:
-	/* Helper Functions for Child States */
-	void ChangeState(const id_type& ActorID, const id_type& NewStateID);
-	u_int XM_CALLCONV GetVector2Direction(DX FXMVECTOR v);
-	u_int GetActorFacingDirection(const id_type& ActorID);
-	DX XMVECTOR GetDirectionVector2(u_int Direction);
 
-private:
+	void HandleInput(size_t ObjectIndex);
 
-	virtual State* Clone() = 0;
-	u_int	m_Direction;
-	STD map<id_type, Input>	m_Input;
-	
+	State* Assemble(State* pState)
+	{
+		pState->pInput = pInput;
+		return pState;
+	}
+
+	/* 
+		Prototypes hold the Data for Input. 
+		ObjectStates will only hold a pointer to
+		that Data because we do not want to manage the memory
+		of Input each time  a State is deleted
+		into every Object's state.
+	*/
+	Input* pInput;
 };
 
-class GlobalState : public State
+class NullState : public State
 {
 public:
 
-	GlobalState() {}
-	virtual ~GlobalState() {}
-
-	virtual void Enter(const id_type& ActorID);
-	virtual void Update(const id_type& ActorID);
-	virtual void Exit(const id_type& ActorID);
-
-	static State* Make(const STD string& Args, char delim)
-	{
-		return new GlobalState;
-	}
+	NullState() {}
+	virtual ~NullState() {}
 
 private:
 
-	virtual State* Clone()	{	return new GlobalState; }
+	virtual void Enter(size_t ObjectIndex);
+	virtual void Update(size_t ObjectIndex);
+	virtual void Exit(size_t ObjectIndex);
+
+	virtual State* Make()	{	return Assemble(new NullState); }
 };
 
 class IdleState : public State
@@ -82,220 +68,193 @@ public:
 #endif
 	}
 
-	virtual void Enter(const id_type& ActorID);
-	virtual void Update(const id_type& ActorID);
-	virtual void Exit(const id_type& ActorID);
-
-	static State* Make(const STD string& Args, char delim)
-	{
-		return new IdleState;
-	}
-
 private:
-	virtual State* Clone()	{ return new IdleState; }
+
+	virtual void Enter(size_t ObjectIndex);
+	virtual void Update(size_t ObjectIndex);
+	virtual void Exit(size_t ObjectIndex);
+
+	virtual State* Make()	{ return Assemble(new IdleState); }
 };
 
-class MovingState : public State
+class MoveState : public State
 {
 public:
 
-	MovingState() 
+	MoveState() 
 	{
 #ifdef CYAN_DEBUG_STATES
 		printf("MoveState Created!\n");
 #endif 
 	}
-	virtual ~MovingState() 
+	virtual ~MoveState() 
 	{ 
 #ifdef CYAN_DEBUG_STATES
 		printf("MoveState Destroyed!\n"); 
 #endif 
 	}
 
-	virtual void Enter(const id_type& ActorID);
-	virtual void Update(const id_type& ActorID);
-	virtual void Exit(const id_type& ActorID);
+private:
 
-	static State* Make(const STD string& Args, char delim)
+	virtual void Enter(size_t ObjectIndex);
+	virtual void Update(size_t ObjectIndex);
+	virtual void Exit(size_t ObjectIndex);
+
+	virtual State* Make() { return Assemble(new MoveState); }
+};
+
+class ChargeJumpState : public State
+{
+public:
+
+	ChargeJumpState(float RageRate, float Force) : RageRate(RageRate), Force(Force)
 	{
-		return new MovingState;
+#ifdef CYAN_DEBUG_STATES
+		printf("ChargeJumpState Created!\n");
+#endif 
+	}
+	virtual ~ChargeJumpState()
+	{
+#ifdef CYAN_DEBUG_STATES
+		printf("ChargeJumpState Destroyed!\n");
+#endif 
 	}
 
 private:
-	virtual State* Clone() { return new MovingState; }
+
+	virtual void Enter(size_t ObjectIndex);
+	virtual void Update(size_t ObjectIndex);
+	virtual void Exit(size_t ObjectIndex);
+
+	virtual State* Make() { return Assemble(new ChargeJumpState(RageRate, Force)); }
+
+private:
+	float	RageRate;
+	float	RageAmount;
+	float	Force;
 };
 
 class InAirState : public State
 {
 public:
 
-	InAirState()
+	InAirState(float AirResistance)
 	{ 
 #ifdef CYAN_DEBUG_STATES
-		printf("JumpState Created!\n"); 
+		printf("InAirState Created!\n"); 
 #endif
 	}
 	virtual ~InAirState()
 	{ 
 #ifdef CYAN_DEBUG_STATES
-		printf("JumpState Destroyed!\n"); 
+		printf("InAirState Destroyed!\n"); 
 #endif
-	}
-
-	virtual void Enter(const id_type& ActorID);
-	virtual void Update(const id_type& ActorID);
-	virtual void Exit(const id_type& ActorID);
-
-	static State* Make(const STD string& Args, char delim)
-	{
-		return new InAirState;
 	}
 
 private:
 
-	virtual State* Clone() { return new InAirState; }
+	virtual void Enter(size_t ObjectIndex);
+	virtual void Update(size_t ObjectIndex);
+	virtual void Exit(size_t ObjectIndex);
+
+	virtual State* Make() { return Assemble(new InAirState(AirResistance)); }
+
+private:
+	float AirResistance;
 	float GroundFriction;
 };
 
-class SlamChargingState : public State
+class ChargeSlamState : public State
 {
 public:
-
-	SlamChargingState(float RageRate, const id_type& GroundSlamStateID) :
-		RageRate(RageRate), GroundSlamStateID(GroundSlamStateID)
+	ChargeSlamState(float RageRate) :
+		RageRate(RageRate)
 	{
 #ifdef CYAN_DEBUG_STATES
 		printf("ChargeSlamState Created!\n");
 #endif
 	}
-	virtual ~SlamChargingState()
+	virtual ~ChargeSlamState()
 	{
 #ifdef CYAN_DEBUG_STATES
 		printf("ChargeSlamState Destroyed!\n");
 #endif
 	}
 
-	virtual void Enter(const id_type& ActorID);
-	virtual void Update(const id_type& ActorID);
-	virtual void Exit(const id_type& ActorID);
+private:
+	virtual void Enter(size_t ObjectIndex);
+	virtual void Update(size_t ObjectIndex);
+	virtual void Exit(size_t ObjectIndex);
 
-	static State* Make(const STD string& Args, char delim)
-	{
-		STD string data;
-		STD istringstream dataline(Args);
-		STD getline(dataline, data, delim);
-		float RageRate = STD stof(data);
-		STD getline(dataline, data, delim);
-		return new SlamChargingState(RageRate, data);
-	}
+	virtual State* Make() { return Assemble(new ChargeSlamState(RageRate)); }
 
 private:
-	virtual State* Clone() { return new SlamChargingState(RageRate, GroundSlamStateID); }
-	float	RageRate;
-	float	RageAmount;
-	float	Gravity;
-	id_type GroundSlamStateID;
+	float Force;
+	float RageRate;
+	float RageAmount;
+	float ObjGravity;
 };
 
-class SlammingState : public State
+class SlamState : public State
 {
 public:
 
-	SlammingState(const id_type& TexID, float SlamForce) :
-		TexID(TexID), SlamForce(SlamForce)
+	SlamState(float SlamForce) :
+		SlamForce(SlamForce)
 	{
 #ifdef CYAN_DEBUG_STATES
-		printf("GroundSlamState Created!\n");
+		printf("SlamState Created!\n");
 #endif
 	}
-	virtual ~SlammingState()
+	virtual ~SlamState()
 	{
 #ifdef CYAN_DEBUG_STATES
-		printf("GroundSlamState Destroyed!\n");
+		printf("SlamState Destroyed!\n");
 #endif
 	}
 
-	virtual void Enter(const id_type& ActorID);
-	virtual void Update(const id_type& ActorID);
-	virtual void Exit(const id_type& ActorID);
+	virtual void Enter(size_t ObjectIndex);
+	virtual void Update(size_t ObjectIndex);
+	virtual void Exit(size_t ObjectIndex);
 
-	static State* Make(const STD string& Args, char delim)
-	{
-		STD string data;
-		STD istringstream dataline(Args);
-		STD getline(dataline, data, delim);
-		std::string TexID = data;
-		STD getline(dataline, data, delim);
-		float SlamForce = STD stof(data);
-		return new SlammingState(TexID, SlamForce);
-	}
 
 private:
 
-	virtual State* Clone() { return new SlammingState(TexID, SlamForce); }
+	virtual State* Make() { return Assemble(new SlamState(SlamForce)); }
 
 private:
 	float SlamForce;
-	u_int EffectID;
-	id_type TexID;
 };
 
-class ShootingState : public State
+class ShootState : public State
 {
 public:
 
-	ShootingState(const id_type& TexID, float ShootingRate, float Force) :
-		TexID(TexID), GrowingRate(ShootingRate), Force(Force)
+	ShootState(float ShootingRate, float ShootingForce) :
+		TexID(TexID), ShootingRate(ShootingRate), ShootingForce(ShootingForce)
 	{
 #ifdef CYAN_DEBUG_STATES
 		printf("ShootingState Created!\n");
 #endif
 	}
-	virtual ~ShootingState()
+	virtual ~ShootState()
 	{
 #ifdef CYAN_DEBUG_STATES
 		printf("ShootingState Destroyed!\n");
 #endif
 	}
 
-	static State* Make(const STD string& Args, char delim)
-	{
-		STD string data;
-		STD istringstream dataline(Args);
-		STD getline(dataline, data, delim);
-		std::string TexID = data;
-		STD getline(dataline, data, delim);
-		float GrowingRate = STD stof(data);
-		STD getline(dataline, data, delim);
-		float Force = STD stof(data);
-		return new ShootingState(TexID, GrowingRate, Force);
-	}
-
-	virtual void Enter(const id_type& ActorID);
-	virtual void Update(const id_type& ActorID);
-	virtual void Exit(const id_type& ActorID);
+	virtual void Enter(size_t ObjectIndex);
+	virtual void Update(size_t ObjectIndex);
+	virtual void Exit(size_t ObjectIndex);
 
 
 private:
-	virtual State* Clone() { return new ShootingState(TexID, GrowingRate, Force); }
+	virtual State* Make() { return Assemble(new ShootState(ShootingRate, ShootingForce)); }
 	
-	float Growth;
-	float GrowingRate;
-	float Force;
-	id_type BulletID;
-	id_type TexID;
+	float Time;
+	float ShootingRate;
+	float ShootingForce;
+	size_t BulletID;
+	size_t TexID;
 };
-
-
-/*---------------------------------------------------------------------------------------------*/
-const STD pair<STD string, State*(*)(const STD string&, char)> StateTypes[] =
-{
-{"Global"	, GlobalState::Make },
-{"Idle"		, IdleState::Make },
-{"Moving"	, MovingState::Make },
-{"InAir"	, InAirState::Make },
-{"Slamming"	, SlammingState::Make },
-{"SlamCharging", SlamChargingState::Make },
-{"Shooting", ShootingState::Make }
-};
-/*---------------------------------------------------------------------------------------------*/

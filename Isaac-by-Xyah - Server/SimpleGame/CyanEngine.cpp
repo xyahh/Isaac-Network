@@ -1,16 +1,14 @@
 #include "stdafx.h"
 #include "CyanEngine.h"
-#include "Renderer.h"
-#include "File.h"
 #include "World.h"
+
 Cyan Engine;
 
-/* Engine Core Functions -------------------------------------------------------------*/
 bool Cyan::Initialize(int WindowWidth, int WindowHeight)
 {
 	NW.AcceptClients();
 	Sound::Initialize();
-	return RenderDevice.Initialize(WindowWidth, WindowHeight);
+	return m_Renderer.Initialize(WindowWidth, WindowHeight);
 }
 
 void Cyan::Destroy()
@@ -19,475 +17,225 @@ void Cyan::Destroy()
 	Sound::Destroy();
 }
 
-void Cyan::HandleEvents()
+void Cyan::PushState(size_t ObjectIndex, size_t StateIndex)
 {
-	for (auto& Event : m_Events)
-		switch (Event.first)
-		{
-		case EVENT::EFFECT_DELETE:
-			DeleteEffect(STD stoi(Event.second));
-			break;
-		}
-	m_Events.clear();
+	QueueAction([this, ObjectIndex, StateIndex]()
+	{
+		if (!m_States[ObjectIndex].empty())
+			m_States[ObjectIndex].top()->Exit(ObjectIndex);
+		m_States[ObjectIndex].emplace(m_StatePrototypes[ObjectIndex][StateIndex]->Make());
+		m_States[ObjectIndex].top()->Enter(ObjectIndex);
+	});
 }
 
-void Cyan::DeleteComponents(WORD Components)
+void Cyan::PopState(size_t ObjectIndex)
 {
-	if (Components & SOUNDS)
-	{
-		for (auto Iter = m_Sounds.rbegin(); Iter != m_Sounds.rend(); ++Iter)
-			Iter->Release();
-		m_Sounds.clear();
-		m_SoundLocator.clear();
-	}
-	if (Components & STATES)
-	{
-		for (auto Iter = m_States.rbegin(); Iter != m_States.rend(); ++Iter)
-		{
-			Iter->StateID.clear();
-			Iter->ActorID.clear();
-			delete Iter->pState;
-			Iter->pState = nullptr;
-		}
+	if (m_States[ObjectIndex].size() < 2) return;
 
-		for (auto Iter = m_StateTypes.rbegin(); Iter != m_StateTypes.rend(); ++Iter)
-		{
-			delete (*Iter);
-			(*Iter) = nullptr;
-		}
+	QueueAction([this, ObjectIndex]()
+	{
+		m_States[ObjectIndex].top()->Exit(ObjectIndex);
+		SafeDelete(m_States[ObjectIndex].top());
+		m_States[ObjectIndex].pop();
+		m_States[ObjectIndex].top()->Enter(ObjectIndex);
+	});
+}
 
-		m_States.clear();
-		m_StateTypes.clear();
-		m_StateTypeLocator.clear();
-	}
-	if (Components & ENTITIES)
+void Cyan::ChangeState(size_t ObjectIndex, size_t StateIndex)
+{
+	QueueAction([this, ObjectIndex, StateIndex]()
 	{
-		m_Physics.clear();
-		m_Graphics.clear();
-		for (auto& i : m_States) //Maybe I have to delete the m_States here as well?
-			i.ActorID.clear();
-		m_EntityLocator.clear();
-	}
-	if (Components & VISUALS)
-	{
-		m_VisualGraphics.clear();
-		m_VisualLocator.clear();
-	}
-	if (Components & COMMANDS)
-	{
-		for (auto Iter = m_Commands.rbegin(); Iter != m_Commands.rend(); ++Iter)
-			delete (*Iter);
-		m_Commands.clear();
-		m_CommandLocator.clear();
-	}
-	if (Components & TEXTURES)
-	{
-		for (auto Iter = m_Textures.rbegin(); Iter != m_Textures.rend(); ++Iter)
-			RenderDevice.DeleteTexture(*Iter);
-		m_Textures.clear();
-	}
+		if (!m_States[ObjectIndex].empty())
+		{
+			m_States[ObjectIndex].top()->Exit(ObjectIndex);
+			SafeDelete(m_States[ObjectIndex].top());
+			m_States[ObjectIndex].pop();
+		}
+		m_States[ObjectIndex].emplace(m_StatePrototypes[ObjectIndex][StateIndex]->Make());
+		m_States[ObjectIndex].top()->Enter(ObjectIndex);
+	});
 }
 
 void Cyan::Render(float fInterpolation)
 {
-	for (auto& g : m_VisualGraphics)
-		g.Render();
-
-	for (auto& g : m_Graphics) 
-	{
-		g.Render(fInterpolation);
-		Physics& ActorPhysics = Engine.GetEntityPhysics(g.m_Actor);
+	FOR_EACH_OBJECT
+		m_Graphics[i].Render(m_Renderer, m_Physics[i], m_Sprites[i], fInterpolation);
+		Physics& ActorPhysics = Engine.GetPhysics(i);
 		DX XMVECTOR Position = DX Add
 		(
 			DX Scale(ActorPhysics.GetPosition(), fInterpolation),
 			DX Scale(ActorPhysics.GetPrevPosition(), 1.f - fInterpolation)
 		);
-
-		World::Convert(Position);
 		NW.Positions.emplace_back(Position);
-	}
-	NW.SendRenderData();
-		//g.Render(fInterpolation);
+	END_FOR
 
-	for (auto& e : m_EffectGraphics)
-		e.Render(fInterpolation);
+	NW.SendRenderData();
 }
 
 void Cyan::Update()
 {
-	//GetInput
-	while(!NW.InputQueue.empty())
+	while (!NW.InputQueue.empty())
 	{
 		KeyData& Key = NW.InputQueue.front();
-		
-		if(Key.pressed)
-			Input::PushedKeysData["Player1"].emplace(Key.key);
-		else
-		{
-			Input::PushedKeysData["Player1"].erase(Key.key);
-			Engine.GetStateType(Engine.GetActorState("Player1").StateID)->GetInput("Player1").m_ReleasedKeys.push(Key.key);
-		}
+		KeyInfo k;
+		k.Value = Key.key;
+		k.Pressed = Key.pressed;
+		k.ClientNum = Key.clientNum;
+		m_States[0].top()->pInput->ReceiveForeignInput(k);
 		NW.InputQueue.pop();
 	}
 
-	for (auto& P : Input::PushedKeysData)
+	FOR_EACH_OBJECT
+		if (m_States[i].empty()) continue;
+		m_States[i].top()->Update(i);
+		FlushActionQueue();
+	END_FOR
+
+		FOR_EACH_OBJECT
+		for (auto& Sprite : m_Sprites[i])
+			Sprite.Update();
+	END_FOR
+
+		FOR_EACH_OBJECT
+		m_Physics[i].Update();
+	m_Physics[i].SetDeltaPosition(DX Subtract(m_Physics[i].GetPosition(), m_Physics[i].GetPrevPosition())); //Change this to a local Variable "Delta".
+	for (size_t j = i + 1; j < m_Physics.size(); ++j)
+		m_Physics[i].HandleCollision(i, &m_Physics[j], j);
+	m_Physics[i].SetPosition(DX Add(m_Physics[i].GetPrevPosition(), m_Physics[i].GetDeltaPosition()));
+	END_FOR
+
+		FlushActionQueue();
+}
+
+size_t Cyan::AddObject()
+{
+	m_Graphics.emplace_back();
+	m_Physics.emplace_back();
+	m_States.emplace_back();
+	m_Sprites.emplace_back();
+	m_Descriptors.emplace_back();
+	m_StatePrototypes.emplace_back();
+	return Last(m_Descriptors);
+}
+
+size_t Cyan::AddSprite(size_t ObjectIndex)
+{
+	m_Sprites[ObjectIndex].emplace_back();
+	return Last(m_Sprites[ObjectIndex]);
+}
+
+size_t Cyan::AddStatePrototype(size_t ObjectIndex, State *&& pState)
+{
+	m_StatePrototypes[ObjectIndex].emplace_back(pState);
+	size_t Index = Last(m_StatePrototypes[ObjectIndex]);
+	m_StatePrototypes[ObjectIndex][Index]->pInput = new Input;
+	return Index;
+}
+
+size_t Cyan::AddCommand(Command *&& pCommand)
+{
+	m_Commands.emplace_back(pCommand);
+	return Last(m_Commands);
+}
+
+size_t Cyan::AddTexture(const STD string & ImagePath)
+{
+	size_t Tex = m_Renderer.CreatePngTexture(ImagePath);
+	m_Textures.emplace_back(Tex);
+	return  Last(m_Textures);
+}
+
+size_t Cyan::AddSound(const STD string & ImagePath, bool isBGM)
+{
+	m_Sounds.emplace_back(ImagePath, isBGM);
+	return Last(m_Sounds);
+}
+
+Descriptor & Cyan::GetDescriptor(size_t Index)
+{
+	return m_Descriptors[Index];
+}
+
+Graphics& Cyan::GetGraphics(size_t Index)
+{
+	return m_Graphics[Index];
+}
+
+Physics & Cyan::GetPhysics(size_t Index)
+{
+	return m_Physics[Index];
+}
+
+State *& Cyan::GetCurrentState(size_t Index)
+{
+	return m_States[Index].top();
+}
+
+Sprite& Cyan::GetSprite(size_t Index, size_t SpriteNumber)
+{
+	return m_Sprites[Index][SpriteNumber];
+}
+
+Input* Cyan::GetStateInput(size_t ObjectIndex, size_t StateIndex)
+{
+	return m_StatePrototypes[ObjectIndex][StateIndex]->pInput;
+}
+
+Command *& Cyan::GetCommand(size_t Index)
+{
+	return m_Commands[Index];
+}
+
+size_t Cyan::GetTexture(size_t Index)
+{
+	return m_Textures[Index];
+}
+
+Sound & Cyan::GetSound(size_t Index)
+{
+	return m_Sounds[Index];
+}
+
+void Cyan::DeleteComponents()
+{
+	for (auto& Sound : m_Sounds)
+		Sound.Release();
+	m_Sounds.clear();
+
+	for (auto& ObjState : m_StatePrototypes)
 	{
-		for (auto& K : P.second)
+		for (auto& StatePrototype : ObjState)
 		{
-			Engine.GetStateType(Engine.GetActorState(P.first).StateID)->GetInput(P.first).m_PushedKeys.push(K);
+			SafeDelete(StatePrototype->pInput);
+			SafeDelete(StatePrototype);
+		}
+		ObjState.clear();
+	}
+
+	for (auto& ObjStateStack : m_States)
+	{
+		while (!ObjStateStack.empty())
+		{
+			SafeDelete(ObjStateStack.top());
+			ObjStateStack.pop();
 		}
 	}
 
 
-	for (auto& s : m_States)
-	{
-		s.pState->Update(s.ActorID);
-		ProcessUpdatedStates();
-	}
-	for (auto Obj = m_Physics.begin(); Obj != m_Physics.end(); ++Obj)
-	{
-		Obj->Update();
-		Obj->SetDeltaPosition(DX Subtract(Obj->GetPosition(), Obj->GetPrevPosition()));
-		for (auto Nearby = Obj+1; Nearby != m_Physics.end();  ++Nearby)
-			Obj->HandleCollision(&*Nearby);
-		Obj->SetPosition(DX Add(Obj->GetPrevPosition(), Obj->GetDeltaPosition()));
-	}
+	m_States.clear();
+	m_StatePrototypes.clear();
 
-	for (auto i = m_EffectLocator.begin(); i != m_EffectLocator.end(); ++i)
-	{
-		if (m_EffectGraphics[i->second].Effect.FrameGridUpdate())
-			AddEvent(EVENT::EFFECT_DELETE, STD to_string(i->first));
-	}
-	HandleEvents();
+	m_Physics.clear();
+	m_Graphics.clear();
+	m_States.clear();
+	m_Sprites.clear();
+	m_Descriptors.clear();
+
+	for (auto& Commands : m_Commands)
+		SafeDelete(Commands);
+	m_Commands.clear();
+
+	for (auto& Texture : m_Textures)
+		m_Renderer.DeleteTexture(Texture);
+	m_Textures.clear();
 }
-
-/* FILE READERS */
-
-void Cyan::AddSoundsByFile(const STD string & filename, char delimiter, bool ignore_first_row)
-{
-	auto SFile = ReadCSV(filename, delimiter, ignore_first_row);
-	m_Sounds.reserve(SFile.size());
-	enum
-	{
-		SOUND_ID,
-		SOUND_PATH,
-		IS_MUSIC,
-	};
-	for (auto& d : SFile)
-		Engine.AddSound(d[SOUND_ID], d[SOUND_PATH], STD stoi(d[IS_MUSIC]));
-}
-
-void Cyan::AddTexturesByFile(const STD string & filename, char delimiter, bool ignore_first_row)
-{
-	auto TFile = ReadCSV(filename, delimiter, ignore_first_row);
-	m_Textures.reserve(TFile.size());
-	enum
-	{
-		TEX_ID,
-		TEX_PATH,
-	};
-	for (auto& d : TFile)
-		Engine.AddTexture(d[TEX_ID], d[TEX_PATH]);
-}
-
-void Cyan::AddActorsByFile(const STD string & filename, char delimiter, bool ignore_first_row)
-{
-	auto AFile = ReadCSV(filename, delimiter, ignore_first_row);
-	m_Graphics.reserve(AFile.size());
-	m_Physics.reserve(AFile.size());
-	m_States.reserve(AFile.size());
-
-	enum
-	{
-		ID,
-		STATE,
-		HEAD_TEX,
-		BODY_TEX,
-		MASS,
-		FRICTION,
-		BOX_W,
-		BOX_H,
-		BOX_D,
-		X,
-		Y,
-		Z
-	};
-	
-	float HeadSize = 1.25f;
-	float BodySize = 0.75f;
-
-	for (auto& d : AFile)
-	{
-		Engine.AddActor(d[ID], d[STATE]);
-
-		Graphics& AGraphics = Engine.GetEntityGraphics(d[ID]);
-		AGraphics.AddSprite("Head");
-		AGraphics.AddSprite("Body");
-
-		Sprite& Head = AGraphics.GetSprite("Head");
-		Sprite& Body = AGraphics.GetSprite("Body");
-
-		Head.SetTexID(d[HEAD_TEX]);
-		Head.SetOffsetY(BodySize * 0.5f + HeadSize * 0.5);
-		Head.SetSize({ HeadSize, HeadSize });
-		Head.SetSpriteInfo({ 0, 0, 2,  4 });
-		Head.SetDirection(1);
-
-		Body.SetTexID(d[BODY_TEX]);
-		Body.SetOffsetY(BodySize * 0.5f - 0.1f);
-		Body.SetSize({ BodySize, BodySize });
-		Body.SetSpriteInfo({ 0, 0, 10, 4 });
-		Body.SetFrameRate(20);
-
-		Physics& APhysics = Engine.GetEntityPhysics(d[ID]);
-		APhysics.SetFriction(STD stof(d[FRICTION]));
-		APhysics.SetMass(STD stof(d[MASS]));
-		//0.5f, 0.1f, 0.75f 
-		APhysics.GetBox().SetDimensions(
-			{ 
-				STD stof(d[BOX_W]),
-				STD stof(d[BOX_H]),
-				STD stof(d[BOX_D])
-			});
-		APhysics.SetCollision(&Collision::Actor);
-		APhysics.SetPosition(
-			{
-				STD stof(d[X]),
-				STD stof(d[Y]),
-				STD stof(d[Z])
-			});
-	}
-}
-
-void Cyan::AddCommandsByFile(const STD string & filename, char delimiter, bool ignore_first_row)
-{
-	auto CFile = ReadCSV(filename, delimiter, ignore_first_row);
-	m_Commands.reserve(CFile.size());
-	enum
-	{
-		COMMAND_ID,
-		COMMAND_TYPE,
-		ARGS
-	};
-	for (auto& d : CFile)
-		Engine.AddCommandByString(d[COMMAND_ID], d[COMMAND_TYPE], d[ARGS]);
-}
-
-void Cyan::AddStatesByFile(const STD string & filename, char delimiter, bool ignore_first_row)
-{
-	auto SFile = ReadCSV(filename, delimiter, ignore_first_row);
-	m_StateTypes.reserve(SFile.size());
-	enum
-	{
-		STATE_ID,
-		STATE_TYPE,
-		ARGS
-	};
-	for (auto& d : SFile)
-		Engine.AddStateTypeByString(d[STATE_ID], d[STATE_TYPE], d[ARGS]);
-}
-
-void Cyan::AddInputsByFile(const STD string & filename, char delimiter, bool ignore_first_row)
-{
-	auto IFile = ReadCSV(filename, delimiter, ignore_first_row);
-
-	enum
-	{
-		STATE_ID,
-		ACTOR_ID,
-		KEY_ID,
-		COMMAND_ID
-	};
-	char Key;
-	for (auto& d : IFile)
-	{
-		if (d[KEY_ID].size() == 1) Key = d[KEY_ID][0]; //char if size of 1
-		else Key = STD stoi(d[KEY_ID]); //int 
-		Engine.GetStateType(d[STATE_ID])->GetInput(d[ACTOR_ID]).AddKeyboardInput(Key, d[COMMAND_ID]);
-	}
-		
-}
-
-
-
-void Cyan::AddCommand(const id_type& AssignID, Command*&& pCommand)
-{
-	m_Commands.emplace_back(pCommand);
-	m_CommandLocator[AssignID] = LastIdx(m_Commands);
-}
-
-void Cyan::AddCommandByString(const id_type& ID,  const STD string& Type, const STD string & Args, char delimiter)
-{
-	for (auto& c : CommandTypes)
-		if (c.first == Type)
-			AddCommand(ID, c.second(Args, delimiter));
-}
-
-void Cyan::AddStateType(const id_type & AssignID, State *&& pState)
-{
-	m_StateTypes.emplace_back(pState);
-	u_int Idx = LastIdx(m_StateTypes);
-	m_StateTypeLocator[AssignID] = Idx;
-}
-
-void Cyan::AddStateTypeByString(const id_type & ID, const STD string & Type, const STD string & Args, char delimiter)
-{
-	for (auto& c : StateTypes)
-		if (c.first == Type)
-			Engine.AddStateType(ID, c.second(Args, delimiter));
-}
-
-StateStruct& Cyan::GetActorState(const id_type & ID)
-{
-	return m_States[m_EntityLocator[ID].StateIndex];
-}
-
-Command * Cyan::GetCommand(const id_type& ID)
-{
-	return Engine.m_Commands[m_CommandLocator[ID]];
-}
-
-State* Cyan::GetStateType(const id_type& ID)
-{
-	return m_StateTypes[m_StateTypeLocator[ID]];
-}
-
-void Cyan::AddEvent(u_int Event, const id_type & ID)
-{
-	m_Events.emplace_back(Event, ID);
-}
-
-void Cyan::ReserveObjects(u_int ActorNumber, u_int BulletNumber, u_int VisualNumber, u_int StateNumber)
-{
-	/* Use Swap if memory needs to be reduced for each Scene */
-	m_VisualGraphics.reserve(VisualNumber);
-	m_EffectGraphics.reserve(ActorNumber);
-	m_States.reserve(ActorNumber + 1);
-	m_StateTypes.reserve(StateNumber);
-	m_Graphics.reserve(ActorNumber + BulletNumber);
-	m_Physics.reserve(ActorNumber + BulletNumber);
-}
-
-void Cyan::AddNonActorState(const id_type & StartState)
-{
-	m_States.emplace_back("", StartState, GetStateType(StartState)->Clone());
-}
-
-id_type Cyan::AddObject(const id_type& ObjectType)
-{
-	static u_int Idx = 0;
-	id_type ObjectID = ObjectType + STD to_string(Idx++);
-	m_Graphics.emplace_back();
-	m_Graphics[LastIdx(m_Graphics)].SetID(ObjectID);
-	m_Physics.emplace_back();
-	m_EntityLocator[ObjectID].GraphicsIndex = LastIdx(m_Graphics);
-	m_EntityLocator[ObjectID].PhysicsIndex  = LastIdx(m_Physics);
-	return ObjectID;
-}
-
-u_int Cyan::AddEffect()
-{
-	static u_int Idx = 0;
-	m_EffectGraphics.emplace_back();
-	m_EffectLocator[Idx] = m_EffectGraphics.size()-1;
-	return Idx++;
-}
-
-void Cyan::AddActor(const id_type & AssignID, const id_type & StartStateID)
-{
-	m_Physics.emplace_back();
-	m_Graphics.emplace_back();
-	m_Graphics[LastIdx(m_Graphics)].SetID(AssignID);
-	m_States.emplace_back(AssignID, StartStateID, GetStateType(StartStateID)->Clone());
-	m_EntityLocator[AssignID].GraphicsIndex = LastIdx(m_Graphics);
-	m_EntityLocator[AssignID].PhysicsIndex = LastIdx(m_Physics);
-	m_EntityLocator[AssignID].StateIndex = LastIdx(m_States);
-}
-
-void Cyan::AddVisual(const id_type& AssignID, WORD config)
-{
-	m_VisualGraphics.emplace_back(config);
-	m_VisualLocator[AssignID] = LastIdx(m_VisualGraphics);
-}
-
-VisualGraphics& Cyan::GetVisualGraphics(const id_type& ID)
-{
-	return m_VisualGraphics[m_VisualLocator[ID]];
-}
-
-Graphics& Cyan::GetEntityGraphics(const id_type& ID)
-{
-	return m_Graphics[m_EntityLocator[ID].GraphicsIndex];
-}
-
-EffectGraphics & Cyan::GetEffect(u_int ID)
-{
-	return m_EffectGraphics[m_EffectLocator[ID]];
-}
-
-u_int Cyan::GetTexture(const id_type & ID)
-{
-	return m_Textures[m_TextureLocator[ID]];
-}
-
-Physics & Cyan::GetEntityPhysics(const id_type& ID)
-{
-	return m_Physics[m_EntityLocator[ID].PhysicsIndex];
-}
-
-void Cyan::UpdateState(const id_type& ActorID, const id_type& NewStateID)
-{
-	if (ActorState != NULL || !NextStateID.empty()) return;
-	ActorState = &m_States[m_EntityLocator[ActorID].StateIndex];
-	NextStateID = NewStateID;
-}
-
-void Cyan::ProcessUpdatedStates()
-{
-	if (ActorState == NULL || NextStateID.empty() || NextStateID == ActorState->StateID) return;
-
-	ActorState->pState->Exit(ActorState->ActorID);	
-	u_int CopyDir = ActorState->pState->m_Direction;
-	delete ActorState->pState;
-	ActorState->pState = GetStateType(NextStateID)->Clone();
-	ActorState->StateID = NextStateID;
-	ActorState->pState->Enter(ActorState->ActorID);
-	ActorState->pState->m_Direction = CopyDir;
-	ActorState = NULL;
-	NextStateID.clear();
-}
-
-void Cyan::DeleteEffect(u_int EffectID)
-{
-	u_int Idx = m_EffectLocator[EffectID];
-
-	for (auto& l : m_EffectLocator)
-		if (l.second >= Idx)
-			--l.second;
-	m_EffectGraphics.erase(m_EffectGraphics.begin() + Idx);
-	m_EffectLocator.erase(EffectID);
-}
-
-/* Texture Functions -----------------------------------------------------------------*/
-
-void Cyan::AddTexture(const id_type& TexID, const STD string& ImagePath)
-{
-	u_int tex = RenderDevice.CreatePngTexture(ImagePath);
-	m_Textures.emplace_back(tex);
-	m_TextureLocator[TexID] = LastIdx(m_Textures);
-}
-
-
-/* Sound Functions -------------------------------------------------------------------*/
-
-void Cyan::AddSound(const id_type& AssignID, const STD string& ImagePath, bool isBGM)
-{
-	m_Sounds.emplace_back(ImagePath, isBGM);
-	m_SoundLocator[AssignID] = LastIdx(m_Sounds);
-}
-
-Sound & Cyan::GetSound(const id_type& ID)
-{
-	return m_Sounds[m_SoundLocator[ID]];
-}
-

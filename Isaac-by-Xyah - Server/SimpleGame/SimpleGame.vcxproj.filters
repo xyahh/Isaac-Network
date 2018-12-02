@@ -144,6 +144,12 @@
     <ClInclude Include="Network.h">
       <Filter>소스 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Descriptor.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Indices.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Gameplay.cpp">
@@ -213,6 +219,12 @@
       <Filter>소스 파일\Custom</Filter>
     </ClCompile>
     <ClCompile Include="Network.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Descriptor.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Indices.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

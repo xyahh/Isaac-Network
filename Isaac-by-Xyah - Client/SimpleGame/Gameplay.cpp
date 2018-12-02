@@ -34,7 +34,7 @@ void Gameplay::Render(float fInterpolation)
 	for (size_t i = 0; i < NW.Positions.size(); ++i) {
 		NW.RenderDevice.DrawTexRect(
 			NW.Positions[i],
-			{ 100.f, 100.f },
+			{ 1.25, 1.25 },
 			{ 1.f, 1.f, 1.f, 1.f },
 			NW.TEX
 		);

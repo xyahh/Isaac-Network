@@ -292,6 +292,12 @@ void XM_CALLCONV Renderer::DrawShadow(DX FXMVECTOR Position, DX FXMVECTOR Size, 
 void XM_CALLCONV Renderer::DrawSprite(DX FXMVECTOR Position, DX FXMVECTOR Size,
 	DX FXMVECTOR Color, u_int TexID, DX GXMVECTOR CurrentSprite, DX HXMVECTOR TotalSprite) const
 {
+
+	//DrawTexRect(Position, Size, Color, TexID);
+	//DX Print(CurrentSprite, '\t');
+	//DX Print(TotalSprite, '\n');
+	//return;
+
 	DX XMVECTOR GLPos = GetGLPos(Position);
 	DX XMVECTOR GLSize = GetGLSize(Size);
 

@@ -148,21 +148,6 @@ void Gameplay::Init()
 		ObjPhysics.SetCollision(&Collision::Basic);
 		ObjPhysics.SetPosition({ -10.f, 0.f, 0.f });
 	}
-	//Floor
-	{
-		size_t Floor = Engine.AddObject();
-
-		Descriptor& TestDesc = Engine.GetDescriptor(Floor);
-
-		TestDesc.SetType(ObjectType::Structure);
-		TestDesc.SetValue(1.f); //Friction
-
-		Physics& ObjPhysics = Engine.GetPhysics(Floor);
-		ObjPhysics.Box().SetDimensions({ 10.f, 10.f, 1.f });
-		ObjPhysics.SetGravity(0.f);
-		ObjPhysics.SetCollision(&Collision::Structure);
-		ObjPhysics.SetPosition({ 0.f, 0.f, -1.f });
-	}
 	
 }
 

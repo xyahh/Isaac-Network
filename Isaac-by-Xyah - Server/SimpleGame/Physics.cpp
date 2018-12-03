@@ -162,11 +162,9 @@ void Physics::Update()
 
 	/* --- Reset & Store For Next Physics Cycle -----------------------------------------------*/
 	Acceleration = DX XMVectorZero();
-	m_Friction = 0.f;
-
-	if (DX GetZ(Position) < -1.f)
+	if (DX GetZ(Position) < 0.f)
 	{
-		DX SetZ(&Position, -1.f);
+		DX SetZ(&Position, 0.f);
 		DX SetZ(&Velocity, 0.f);
 	}
 

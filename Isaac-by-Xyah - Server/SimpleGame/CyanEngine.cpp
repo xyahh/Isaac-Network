@@ -59,7 +59,7 @@ void Cyan::ChangeState(size_t ObjectIndex, size_t StateIndex)
 void Cyan::Render(float fInterpolation)
 {
 	FOR_EACH_OBJECT
-		m_Graphics[i].Render(m_Renderer, m_Physics[i], m_Sprites[i], fInterpolation);
+		//m_Graphics[i].Render(m_Renderer, m_Physics[i], m_Sprites[i], fInterpolation);
 		Physics& ActorPhysics = Engine.GetPhysics(i);
 		DX XMVECTOR Position = DX Add
 		(

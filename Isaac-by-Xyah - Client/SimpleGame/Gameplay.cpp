@@ -31,13 +31,23 @@ void Gameplay::Render(float fInterpolation)
 		exit(0);
 	}
 
-	for (size_t i = 0; i < NW.Positions.size(); ++i) {
+	for (size_t i = 0; i < NW.Positions.size(); ++i) 
+	{
 		NW.RenderDevice.DrawTexRect(
 			NW.Positions[i],
 			{ 1.25, 1.25 },
 			{ 1.f, 1.f, 1.f, 1.f },
 			NW.TEX
 		);
+		/*NW.RenderDevice.DrawSprite(
+			NW.Positions[i],
+			{ 1.25, 1.25 },
+			{ 1.f, 1.f, 1.f, 1.f },
+			NW.TEX,
+			{ 0, 0 },
+			{ 1, 1 }
+			
+		);*/
 	}
 
 }

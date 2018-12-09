@@ -1,20 +1,15 @@
 #include "stdafx.h"
-#include "Framework.h"
-#include "Scene.h"
-#include "Logo.h"
+#include "CyanEngine.h"
 #include "Gameplay.h"
+#include "Menu.h"
+#include "Logo.h"
 
-int main(int argc, char **argv)
-{	
-	/* Scale Set (0.01m : 1 px) */
-	World::SetScale(0.025f, 1);
-	
-	/* Game Loop */
-	Fw.Initialize("The Binding of Isaac", 800, 800, argc, argv);
-	Fw.ToScene(new Gameplay);
-	Fw.Run();
-	Fw.Close();
-
-    return FALSE;
+int WINAPI WinMain(HINSTANCE   hInstance, HINSTANCE   hPrevInstance, LPSTR lpCmdLine, int nCmdShow)  
+{
+	Engine.Init("Binding of Isaac", 800, 800, true);
+	Engine.GetFramework().PlayScene<Gameplay>();
+	Engine.GetWorld().SetScale(0.025f, 1);
+	Engine.MainLoop();
+	return FALSE;
 }
-
+	

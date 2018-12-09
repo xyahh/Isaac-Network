@@ -29,6 +29,7 @@ void Physics::HandleCollision(size_t MyID, Physics* OtherPhysics, size_t OtherID
 	if (Collision::HandleCollision(Min, Max, OtherMin, OtherMax))
 	{
 		DX XMVECTOR Normal = Collision::GetNormal(Min, Max, OtherMin, OtherMax);
+		
 		if (m_Collision)
 			m_Collision->OnCollision(MyID, this, OtherID, OtherPhysics, Normal);
 		if (OtherPhysics->m_Collision)
@@ -136,6 +137,7 @@ void Physics::Update()
 	DX XMVECTOR Velocity = DX3 Load(m_Velocity);
 	DX XMVECTOR Acceleration = DX3 Load(m_Acceleration);
 
+
 	/* --- Gravity -----------------------------------------------------------------------------*/
 	Acceleration = DX Add(Acceleration, { 0.f, 0.f, m_Gravity });
 	/* -----------------------------------------------------------------------------------------*/
@@ -154,6 +156,7 @@ void Physics::Update()
 		DX Multiply(Velocity, PreviousVelocity),
 		DX XMVectorZero()
 	);
+	
 	Velocity = DX Multiply(Velocity, DX Evaluate(FrictionError));
 	/* -----------------------------------------------------------------------------------------*/
 
@@ -162,13 +165,15 @@ void Physics::Update()
 
 	/* --- Reset & Store For Next Physics Cycle -----------------------------------------------*/
 	Acceleration = DX XMVectorZero();
+	//m_Friction = 0.f;
+
 	if (DX GetZ(Position) < 0.f)
 	{
 		DX SetZ(&Position, 0.f);
 		DX SetZ(&Velocity, 0.f);
 	}
 
-	m_Acceleration = DX3 Store(Acceleration);
+	m_Acceleration =  DX3 Store(Acceleration);
 	m_Velocity		= DX3 Store(Velocity);
 	m_Position		= DX3 Store(Position);
 	/* -----------------------------------------------------------------------------------------*/

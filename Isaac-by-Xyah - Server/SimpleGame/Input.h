@@ -6,7 +6,6 @@
 #define GAMEPAD		0x02
 #define KEY_PRESSED(key) (GetAsyncKeyState(key) & 0x8000)
 
-
 struct KeyInfo
 {
 	int		Value;
@@ -14,36 +13,19 @@ struct KeyInfo
 	int		ClientNum;
 };
 
-struct KeyState
-{
-	bool Pressed;
-	bool Released;
-};
-
 class Input
 {
-	friend State;
 	friend Cyan;
 
-public:
-	Input()  {}
-	~Input() {}
+private:
 
-	void AddKey(int Value, size_t CommandIndex);
-	void EmplaceLocalInput();
-	void ClearLocalInput();
+	void DefineInput(int Value);
+	void ProcessInput();
 
 private:
 
-	void ReceiveLocalInput(); 
-	void ReceiveForeignInput(const KeyInfo& Key); //Network Support
-	void ProcessInput(size_t ObjectIndex);
-
-private:
-	STD map<int, KeyState>		m_LocalInput;
-	STD multimap<int, size_t>	m_Controls;
-	STD set<int>	m_Input;
-	STD stack<int>	m_PushedKeys;
-	STD stack<int>	m_ReleasedKeys;
-
+	/* map <KeyValue, Pressed> */
+	STD map<int, bool>	m_Input;
+	STD vector<int>		m_Pushed;
+	STD vector<int>		m_Released;
 };

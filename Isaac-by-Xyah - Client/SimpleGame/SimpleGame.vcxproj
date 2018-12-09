@@ -153,7 +153,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Framework.h" />
-    <ClInclude Include="LoadPng.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="Renderer.h" />
@@ -167,7 +166,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework.cpp" />
-    <ClCompile Include="LoadPng.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Logo.cpp" />

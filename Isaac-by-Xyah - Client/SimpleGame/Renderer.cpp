@@ -1,10 +1,34 @@
 #include "stdafx.h"
 #include "Renderer.h"
 
+#include <atlimage.h>
 #include <fstream>
+
 #include "Dependencies/GL/glew.h"
-#include "LoadPng.h"
 #include "World.h"
+
+/* CImage to Unsigned Char Vector */
+STD vector<unsigned char> GetImageBits(const CImage & Image)
+{
+	STD vector<GLubyte> ImageBits;
+	BITMAP BMP;
+	GetObject(Image, sizeof(BITMAP), &BMP);
+	BITMAPINFOHEADER BMPHeader{ 0 };
+	BMPHeader.biSize = sizeof(BITMAPINFOHEADER);
+	BMPHeader.biWidth = BMP.bmWidth;
+	BMPHeader.biHeight = BMP.bmHeight;
+	BMPHeader.biPlanes = 1;
+	BMPHeader.biBitCount = Image.GetBPP();
+	BMPHeader.biCompression = (BI_RGB);
+
+	HDC hDC = ::GetDC(NULL);
+	GetDIBits(hDC, Image, 0, BMP.bmHeight, NULL, (LPBITMAPINFO)&BMPHeader, DIB_RGB_COLORS);
+	ImageBits.resize(BMPHeader.biSizeImage);
+	GetDIBits(hDC, Image, 0, BMP.bmHeight, &(ImageBits[0]), (LPBITMAPINFO)&BMPHeader, DIB_RGB_COLORS);
+	ReleaseDC(NULL, hDC);
+	return ImageBits;
+}
+
 
 DX XMVECTOR XM_CALLCONV Renderer::GetGLPos(DX FXMVECTOR Position) const
 {
@@ -45,9 +69,9 @@ bool Renderer::Initialize(int windowSizeX, int windowSizeY)
 	m_TextureRectSeqShader = CompileShaders("./Shaders/TextureRectSeq.vs", "./Shaders/TextureRectSeq.fs");
 
 	//Load shadow texture
-	m_TexShadow = CreatePngTexture("./Resources/shadow.png");
+	m_TexShadow = GenerateTexture("./Resources/shadow.png");
 #ifdef CYAN_DEBUG_COLLISION
-	m_DebugRect = CreatePngTexture("./Resources/debug_rect.png");
+	m_DebugRect = GenerateTexture("./Resources/debug_rect.png");
 #endif
 
 	//Create VBOs
@@ -61,12 +85,12 @@ void Renderer::CreateVertexBufferObjects()
 	float texRect[]
 		=
 	{
-		-1.f, -1.f, 0.f, 0.f, 1.f,
-		-1.f, +1.f, 0.f, 0.f, 0.f,
-		+1.f, +1.f, 0.f, 1.f, 0.f, //Triangle1
-		-1.f, -1.f, 0.f, 0.f, 1.f,
-		+1.f, +1.f, 0.f, 1.f, 0.f,
-		+1.f, -1.f, 0.f, 1.f, 1.f //Triangle2
+		-1.f, -1.f, 0.f, 0.f, 0.f,
+		-1.f, +1.f, 0.f, 0.f, 1.f,
+		+1.f, +1.f, 0.f, 1.f, 1.f, //Triangle1
+		-1.f, -1.f, 0.f, 0.f, 0.f,
+		+1.f, +1.f, 0.f, 1.f, 1.f,
+		+1.f, -1.f, 0.f, 1.f, 0.f //Triangle2
 	};
 
 	glGenBuffers(1, &m_VBOTexRect);
@@ -74,23 +98,27 @@ void Renderer::CreateVertexBufferObjects()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(texRect), texRect, GL_STATIC_DRAW);
 }
 
-u_int Renderer::CreatePngTexture(const STD string& filePath) const
+u_int Renderer::GenerateTexture(const STD string & filePath) const
 {
-	u_int temp;
-	glGenTextures(1, &temp);
+	u_int TexID;
 
-	//Load Pngs
-	// Load file and decode image.
-	STD vector<unsigned char> image;
-	unsigned width, height;
-	unsigned error = lodepng::decode(image, width, height, filePath);
+	CImage Image;
+	Image.Load(filePath.c_str());
 
-	glBindTexture(GL_TEXTURE_2D, temp);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image[0]);
+	glGenTextures(1, &TexID);
+	glBindTexture(GL_TEXTURE_2D, TexID);
 
-	return temp;
+	int BitsPerPixel = Image.GetBPP() / 8;
+
+	GLenum Format = GL_BGR_EXT;
+	if (BitsPerPixel == 4)
+		Format = GL_BGRA_EXT;
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, BitsPerPixel, Image.GetWidth(), Image.GetHeight(), 0, Format, GL_UNSIGNED_BYTE, GetImageBits(Image).data());
+	return TexID;
 }
 
 void Renderer::DeleteTexture(u_int texID) const

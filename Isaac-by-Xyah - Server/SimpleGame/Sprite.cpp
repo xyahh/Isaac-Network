@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Sprite.h"
 
-
 void Sprite::SetTexture(size_t TexIdx)
 {
  	TexIndex = TexIdx;
@@ -17,14 +16,14 @@ void XM_CALLCONV Sprite::SetOffset(DX FXMVECTOR _Offset)
 	Offset = DX3 Store(_Offset);
 }
 
-void Sprite::SetSpriteType(SPRITETYPE Type)
+void Sprite::SetSpriteType(SpriteType _Type)
 {
-	SpriteType = Type;
+	Type = _Type;
 }
 
-void Sprite::SetFrameRate(float FrameRate_)
+void Sprite::SetFrameRate(float _FrameRate)
 {
-	FrameRate = FrameRate_;
+	FrameRate = _FrameRate;
 }
 
 void XM_CALLCONV Sprite::SetSize(DX FXMVECTOR _Size)
@@ -45,11 +44,14 @@ void Sprite::ResetSprite()
 
 bool Sprite::Update()
 {
-	switch (SpriteType)
+	switch (Type)
 	{
-	case SPRITETYPE::LINEAR:return LinearUpdate();
-	case SPRITETYPE::GRID: return GridUpdate();
+	case SpriteType::Linear: 
+		return LinearUpdate();
+	case SpriteType::Grid: 
+		return GridUpdate();
 	}
+	return false;
 }
 
 void Sprite::NextFrame()
@@ -65,17 +67,23 @@ float Sprite::GetFrameRate() const
 bool Sprite::LinearUpdate()
 {
 	CurrentFrame += UPDATE_TIME *  FrameRate;
-	Current.x = (int)(CurrentFrame) % Total.x;
-	return CurrentFrame > Total.x;
+	Current.x = (u_int)(CurrentFrame) % Total.x;
+	return CurrentFrame >= Total.x;
 }
 
 bool Sprite::GridUpdate()
 {
 	CurrentFrame += UPDATE_TIME * FrameRate;
-	Current.x = (int)(CurrentFrame) % Total.x;
-	int Vframes = (int)(CurrentFrame) / Total.x;
+	Current.x = (u_int)(CurrentFrame) % Total.x;
+	u_int Vframes = (u_int)(CurrentFrame) / Total.x;
 	Current.y = Vframes % Total.y;
-	return Vframes >= Total.y;
+	if (Vframes >= Total.y)
+	{
+		Dispatch(SpriteEvent::LoopEnd);
+		CurrentFrame = 0;
+		return true;
+	}
+	return false;
 }
 
 size_t Sprite::GetTexture() const

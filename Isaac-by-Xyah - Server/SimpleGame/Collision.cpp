@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Collision.h"
-#include "Physics.h"
 #include "CyanEngine.h"
 
 void XM_CALLCONV Collision::BBox::SetDimensions(DX FXMVECTOR v)
@@ -63,9 +62,8 @@ void XM_CALLCONV StructureCollision::OnCollision
 ) 
 {
 	BasicCollision::OnCollision(MyID, MyBody, CollidingID, CollidingBody, CollisionNormal);
-	float MyFriction = Engine.GetDescriptor(MyID).GetValue();
-	float CollidingFriction = CollidingBody->GetFriction();
-	if (MyFriction > CollidingFriction)
-		CollidingBody->SetFriction(MyFriction); 
-		
+	//float MyFriction = Engine.GetDescriptor(MyID).GetValue();
+	//float CollidingFriction = CollidingBody->GetFriction();
+	//if (MyFriction > CollidingFriction)
+	//	CollidingBody->SetFriction(MyFriction); 
 }

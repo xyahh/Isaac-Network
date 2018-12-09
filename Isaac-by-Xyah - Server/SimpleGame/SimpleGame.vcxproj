@@ -107,7 +107,7 @@
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>.\Dependencies\FMOD\x64;.\Dependencies\GL\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Xinput9_1_0.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);freeglut.lib;glew32.lib;fmod_vc.lib</AdditionalDependencies>
@@ -154,45 +154,48 @@
   <ItemGroup>
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Command.h" />
+    <ClInclude Include="Controller.h" />
     <ClInclude Include="Descriptor.h" />
-    <ClInclude Include="Entities.h" />
-    <ClInclude Include="File.h" />
-    <ClInclude Include="Framework.h" />
+    <ClInclude Include="DevConsole.h" />
+    <ClInclude Include="Direction.h" />
+    <ClInclude Include="Network.h" />
+    <ClInclude Include="Subject.h" />
+    <ClInclude Include="Window.h" />
     <ClInclude Include="CyanEngine.h" />
     <ClInclude Include="Gamepad.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Indices.h" />
     <ClInclude Include="Input.h" />
-    <ClInclude Include="LoadPng.h" />
     <ClInclude Include="Math.h" />
-    <ClInclude Include="Network.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Logo.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Gameplay.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Command.cpp" />
+    <ClCompile Include="Controller.cpp" />
     <ClCompile Include="Descriptor.cpp" />
-    <ClCompile Include="Entities.cpp" />
-    <ClCompile Include="File.cpp" />
-    <ClCompile Include="Framework.cpp" />
+    <ClCompile Include="DevConsole.cpp" />
+    <ClCompile Include="Network.cpp" />
+    <ClCompile Include="Subject.cpp" />
+    <ClCompile Include="Window.cpp" />
     <ClCompile Include="CyanEngine.cpp" />
     <ClCompile Include="Gamepad.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Indices.cpp" />
     <ClCompile Include="Input.cpp" />
-    <ClCompile Include="LoadPng.cpp" />
-    <ClCompile Include="Network.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Logo.cpp" />
@@ -209,6 +212,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -220,10 +224,10 @@
     <None Include="Shaders\TextureRectSeq.vs" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="glut.rc" />
+    <ResourceCompile Include="SimpleGame1.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Icon.ico" />
+    <Image Include="Resources\icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

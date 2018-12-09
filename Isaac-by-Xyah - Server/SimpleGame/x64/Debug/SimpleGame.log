@@ -1,5 +1,11 @@
-﻿  Collision.cpp
-  Gameplay.cpp
-  Physics.cpp
-  Generating Code...
+﻿  Gameplay.cpp
+c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\gameplay.cpp(71): warning C4101: 'HEAD': unreferenced local variable
+c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\cyanengine.h(101): warning C4267: 'argument': conversion from 'size_t' to 'u_int', possible loss of data
+  c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\cyanengine.h(58): note: see reference to function template instantiation 'void Cyan::Add<T,State*,size_t&,float&,float&>(std::vector<State *,std::allocator<_Ty>> &,size_t *,size_t &,float &,float &)' being compiled
+          with
+          [
+              T=ShootState,
+              _Ty=State *
+          ]
+  c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\gameplay.cpp(99): note: see reference to function template instantiation 'void Cyan::AddStatePrototype<ShootState,size_t&,float,float>(size_t *,size_t &,float &&,float &&)' being compiled
   SimpleGame.vcxproj -> C:\Users\Juan\Documents\University Stuff\Game Software\Isaac-Online\Isaac-by-Xyah - Server\x64\Debug\SimpleGame.exe

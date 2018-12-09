@@ -118,7 +118,7 @@ void Network::sendInput(KeyData k)
 void Network::Init()
 {
 	RenderDevice.Initialize(800, 800);
-	TEX = RenderDevice.CreatePngTexture("./Resources/Characters/Isaac.png");
+	TEX = RenderDevice.GenerateTexture("./Resources/Characters/Isaac.png");
 
 
 	//NW.Positions.resize(100);

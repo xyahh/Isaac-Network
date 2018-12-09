@@ -24,7 +24,7 @@ public:
 	void XM_CALLCONV DrawTexRect(DX FXMVECTOR Position, DX FXMVECTOR Size, DX FXMVECTOR Color, u_int TexID) const;
 	void XM_CALLCONV DrawShadow(DX FXMVECTOR Position, DX FXMVECTOR Size, DX FXMVECTOR Color) const;
 
-	u_int CreatePngTexture(const STD string& filePath) const;
+	u_int GenerateTexture(const STD string& filePath) const;
 	void DeleteTexture(u_int texID) const;
 
 	bool Initialize(int windowSizeX, int windowSizeY);

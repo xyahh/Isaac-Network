@@ -1,25 +1,32 @@
 #pragma once
+#include "Subject.h"
 
-enum SPRITETYPE
+enum SpriteType
 {
-	LINEAR,
-	GRID
+	Linear,
+	Grid,
 };
 
-class Sprite
+enum SpriteEvent
+{
+	LoopEnd,
+};
+
+class Sprite : public EventDispatcher
 {
 	friend Cyan;
 
 public:
 
 	Sprite() :
-		SpriteType(SPRITETYPE::LINEAR),
+		Type(SpriteType::Linear),
 		FrameRate(0),
 		CurrentFrame(0.f),
 		Current(0, 0),
 		Total(1, 1),
 		Size(0.f, 0.f),
-		Offset(0.f, 0.f, 0.f)
+		Offset(0.f, 0.f, 0.f),
+		TexIndex(0)
 	{}
 
 
@@ -32,7 +39,7 @@ public:
 	void XM_CALLCONV SetTotal(DX FXMVECTOR _Total);
 	void XM_CALLCONV SetOffset(DX FXMVECTOR _Offset);
 
-	void SetSpriteType(SPRITETYPE Type);
+	void SetSpriteType(SpriteType Type);
 	void SetFrameRate(float FrameRate);
 	
 	bool Update();
@@ -52,7 +59,7 @@ public:
 	DX XMVECTOR XM_CALLCONV GetOffset() const;
 
 private:
-	SPRITETYPE	SpriteType;
+	SpriteType	Type;
 	size_t		TexIndex;
 	float		FrameRate;
 	float		CurrentFrame;

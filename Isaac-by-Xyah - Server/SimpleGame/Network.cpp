@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Network.h"
 
-#define CLIENTSNUM 2
+#define CLIENTSNUM 1
 
 Network NW;
 

@@ -2,14 +2,14 @@
 
 class World
 {
-	static float Scale;
+	float Scale { 1.f };
 
 public:
 	World() {}
 	~World() {}
 
-	static void SetScale(float meter, unsigned int pixels);
-	static float GetScale();
+	void SetScale(float meter, unsigned int pixels);
+	float GetScale();
 
 private:
 	//Camera

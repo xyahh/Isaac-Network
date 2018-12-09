@@ -24,6 +24,7 @@
 #include <map>
 
 #include "Math.h"
+#include "Indices.h"
 
 #define CYAN_DEBUG_STATES
 #define CYAN_DEBUG_COLLISION
@@ -47,11 +48,25 @@ inline size_t Last(STD vector<T> v)
 }
 
 template<class T>
-void SafeDelete(T*& Object)
+inline void EraseByValue(STD vector<T>& v, const T& value)
 {
-	delete Object;
-	Object = NULL;
+	size_t Count = 0;
+	v.erase(STD remove(v.begin(), v.end(), value), v.end());
 }
+
+
+template<class T>
+inline void EraseByIndex(STD vector<T>& v, size_t Index)
+{
+	size_t Count = 0;
+	v.erase(STD remove_if(v.begin(), v.end(), [&](const T& value)
+	{
+		return Count++ == Index;
+	}), v.end());
+}
+
+
+
 
 /* Core */
 class Framework;

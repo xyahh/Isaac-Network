@@ -22,11 +22,24 @@ struct RenderData {
 	RenderData2 RenderDataSet[3];
 };
 
-
 struct KeyData {
 	int key;
 	int clientNum;
 	bool pressed;
+};
+
+struct UserData {
+	char name[255];
+	char nickname[255];
+	char password[255];
+
+	int loginState;
+	int sceneNumber;
+	int index;
+	int actorNumber;
+
+	bool isAlreadyExist;
+	bool isAlreadyLoggedIn;
 };
 
 class Network

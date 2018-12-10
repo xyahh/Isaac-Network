@@ -1,22 +1,17 @@
 #include "stdafx.h"
 #include "Network.h"
 
-
 Network Nw;
 
 Network::Network()
 {
 
-
-
 }
 
 Network::~Network()
 {
+
 }
-
-
-
 
 void Network::err_quit(char *msg)
 {
@@ -45,68 +40,6 @@ void Network::err_display(char *msg)
 	printf("[%s] %s", msg, (LPCTSTR)lpMsgBuf);
 	LocalFree(lpMsgBuf);
 }
-
-
-
-
-
-
-//DWORD WINAPI Network::ProcessClient(LPVOID p)
-//{
-//	Arg* pArg = (Arg*)p;
-//	pArg->p->testFunc(pArg->sock);
-//	
-//	return 0;
-//
-//}
-
-//void Network::recvstart()
-//{
-//	//Arg arg = { this, clientSock };
-//
-//
-//	//HANDLE hThread = CreateThread(NULL, 0, &ProcessClient, &arg, 0, NULL);
-//	
-//	HANDLE hThread = CreateThread(NULL, 0, [](LPVOID)->DWORD { NW.testFunc(NW.clientSock); return 0; }, 0, 0, NULL);
-//
-//	CloseHandle(hThread);
-//}
-//
-//void Network::testFunc(SOCKET sock)
-//{
-//
-//	SOCKADDR_IN clientaddr;
-//	
-//
-//
-//	int retval = 0;
-//	while (1) {
-//
-//		int Size = 0;
-//		retval = recvn(NW.clientSock, (char*)&Size, sizeof(Size), 0);
-//		if (retval == SOCKET_ERROR) {
-//			err_display(const_cast<char*>("recv()"));
-//			break;
-//		}
-//
-//		DX XMFLOAT3* Pos = new DX XMFLOAT3[Size];
-//		retval = recvn(NW.clientSock, (char*)&Pos[0], sizeof(DX XMFLOAT3) * Size, 0);
-//		if (retval == SOCKET_ERROR) {
-//			err_display(const_cast<char*>("recv()"));
-//			break;
-//		}
-//
-//		for (size_t i = 0; i < Size; ++i) {
-//			RenderDevice.DrawTexRect(
-//				Pos[i],
-//				{ 100.f, 100.f },
-//				{ 1.f, 1.f, 1.f, 1.f },
-//				TEX
-//			);
-//		}
-//	}
-//	
-//}
 
 void Network::SendInput(KeyData k)
 {
@@ -155,15 +88,104 @@ void Network::Init()
 	}
 	printf("clientNum : %d\n", ClientNum);
 
+	//#pragma region 최우진코드
+	//UserData player;
+	//player.sceneNumber = 0;
 
-	//recvstart();
-	// 이부분은 메인에서 따로 호출필요 
-	//	HANDLE hThread = CreateThread(NULL, 0, NW.ProcessClient, (LPVOID)sock, 0, NULL);
+	//int menu = 0;
+	//bool hasActorNumber = false;
+	//bool gameStart = false;;
+
+	//while (1) {
+	//	if (player.sceneNumber == LOGINSCENE) 
+	//	{
+	//		if (gameStart)
+	//			return;
+
+	//		STD cout << "메뉴를 선택하세요" << STD endl;
+	//		STD cout << "1. 가입" << STD endl;
+	//		STD cout << "2. 로그인" << STD endl;
+	//		STD cin >> menu;
+
+	//		if (menu == SIGNUP)
+	//		{
+	//			system("cls");
+	//			STD cout << "이름을 입력하세요 : ";
+	//			STD cin >> player.name;
+	//			STD cout << "닉네임을 입력하세요 : ";
+	//			STD cin >> player.nickname;
+	//			STD cout << "비밀번호를 입력하세요 : ";
+	//			STD cin >> player.password;
+	//			player.loginState = 1;
+	//		}
+
+	//		else if (menu == SIGNIN)
+	//		{
+	//			system("cls");
+	//			STD cout << "닉네임을 입력하세요 : ";
+	//			STD cin >> player.nickname;
+	//			STD cout << "비밀번호를 입력하세요 : ";
+	//			STD cin >> player.password;
+	//			player.loginState = 2;
+	//		}
+
+	//		retval = send(clientSock, (char *)&player, sizeof(player), 0);
+	//		if (retval == SOCKET_ERROR) {
+	//			err_display((char*)"send()");
+	//			exit(1);
+	//		}
+
+	//		retval = recvn(clientSock, (char *)&player, sizeof(player), 0);
+	//		if (retval == SOCKET_ERROR) {
+	//			err_display((char*)"recv()");
+	//			exit(1);
+	//		}
+
+	//		if (player.loginState == 1) {
+	//			if (player.isAlreadyExist)
+	//				STD cout << STD endl << "이미 존재하는 아이디입니다." << STD endl << STD endl;
+	//			else
+	//				STD cout << STD endl << "아이디를 생성했습니다." << STD endl << STD endl;
+	//		}
+
+	//		if (player.loginState == 2 && player.sceneNumber == 0)
+	//		{
+	//			if (player.isAlreadyLoggedIn) {
+	//				STD cout << STD endl << "이미 접속한 아이디 입니다." << STD endl << STD endl;
+	//				player.isAlreadyLoggedIn = false;
+	//			}
+	//			else
+	//				STD cout << STD endl << "유저 정보가 불일치합니다." << STD endl << STD endl;
+	//		}
+	//	}
+
+	//	else if (player.sceneNumber == LOBBYSCENE)
+	//	{
+	//		if (gameStart)
+	//			return;
+
+	//		system("cls");
+	//		STD cout << "로비에 접속했습니다." << STD endl;
+
+	//		retval = recvn(clientSock, (char *)&player, sizeof(player), 0);
+	//		if (retval == SOCKET_ERROR) {
+	//			break;
+	//		}
+	//	}
+
+	//	else if (player.sceneNumber == INGAMESCENE) {
+	//		STD cout << "게임에 접속 했습니다." << STD endl;
+	//		gameStart = true;
+	//		break;
+	//	}
+	//}
+	//ClientNum = player.actorNumber;
+	//STD cout << "제 번호는 : " << ClientNum << " 입니다." << STD endl;
+	//#pragma endregion
 }
 
 int Network::recvn(SOCKET s, char * buf, int len, int flags)
 {
-
 	int received;
 	char *ptr = buf;
 	int left = len;
@@ -179,39 +201,12 @@ int Network::recvn(SOCKET s, char * buf, int len, int flags)
 	}
 
 	return (len - left);
-
 }
 
 void Network::ReceiveRenderData()
 {
 	while (1)
 	{
-		/*retval = recvn(NW.clientSock, (char*)&vecSize, sizeof(int), 0);
-		if (retval == SOCKET_ERROR) {
-		err_display(const_cast<char*>("recv()"));
-		exit(0);
-		}
-
-		Positions.resize(vecSize);
-		retval = recvn(clientSock, (char*)&Positions[0], sizeof(DX XMVECTOR) * vecSize, 0);
-		if (retval == SOCKET_ERROR) {
-		err_display(const_cast<char*>("recv()"));
-		exit(0);
-		}*/
-		/*int tmp = 0;
-		static bool skipRecv = false;
-
-		if (skipRecv == false)
-		{
-			retval = recvn(NW.clientSock, (char*)&tmp, sizeof(int), 0);
-			if (retval == SOCKET_ERROR) {
-				err_display(const_cast<char*>("recv()"));
-				exit(0);
-			}
-			skipRecv = true;
-		}*/
-
-
 		retval = recvn(Nw.clientSock, (char*)&vecSize, sizeof(int), 0);
 		if (retval == SOCKET_ERROR) {
 			err_display(const_cast<char*>("recv()"));
@@ -225,5 +220,4 @@ void Network::ReceiveRenderData()
 			exit(0);
 		}
 	}
-
 }

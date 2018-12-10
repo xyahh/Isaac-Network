@@ -13,6 +13,19 @@ struct KeyData {
 	bool pressed = false;
 };
 
+struct UserData {
+	char name[255];
+	char nickname[255];
+	char password[255];
+
+	int loginState;
+	int sceneNumber;
+	int index;
+	int actorNumber;
+
+	bool isAlreadyExist;
+	bool isAlreadyLoggedIn;
+};
 
 struct RenderData2 {
 	DX XMFLOAT2 Current;
@@ -35,13 +48,13 @@ public:
 	~Network();
 
 	static Network GameNetwork;
-
+	bool tempReady = false;
 	void err_quit(char *msg);
 	void err_display(char *msg);
 
 	void AcceptClients();
 	void SendRenderData();
-//	DWORD WINAPI ServerMain(LPVOID p);
+	//	DWORD WINAPI ServerMain(LPVOID p);
 	void testFunc();
 	STD vector<DX XMVECTOR> Positions;
 	STD vector <RenderData> rendererData;
@@ -50,11 +63,30 @@ public:
 	int recvn(SOCKET s, char * buf, int len, int flags);
 private:
 	int CurrentClientNum = 0;
-	int EnteredClientsNum = 0;
-	STD vector<SOCKET> ClientSockets;
 
-	 int retval = 0;
-	 SOCKET listen_sock;
+	STD vector<SOCKET> standBySockets;
+	STD vector<SOCKET> clientSockets;
+	STD vector<UserData> loginUser;
+
+	STD vector<UserData> tempVECT;
+
+	int retval = 0;
+	SOCKET listen_sock;
+
+	UserData savedPlayerData[255];
+
+	int EnteredClientsNum = 0;		// 지워야 함
+	int lobbyClientsNum = -1;
+	int ready = 0;
+
+	bool gameStart;
+	bool noActorNumber;
+	bool noSavedFile;
+	float timeCount = 3;
+
+	void ReadUserData();
+	void WriteUserData(UserData& player);
+	void CheckUserData(UserData& player, SOCKET& sock);
 };
 
 

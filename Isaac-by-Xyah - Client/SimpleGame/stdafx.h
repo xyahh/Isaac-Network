@@ -24,7 +24,7 @@
 
 
 
-#define SERVERIP   "172.16.1.238"
+#define SERVERIP   "127.0.0.1"
 #define SERVERPORT 9000
 #define BUFSIZE 4096
 

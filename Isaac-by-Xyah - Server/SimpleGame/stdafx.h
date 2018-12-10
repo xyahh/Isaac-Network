@@ -2,7 +2,8 @@
 
 #pragma comment(lib, "ws2_32")
 #include "targetver.h"
-
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <tchar.h>
 #include <winsock2.h>
@@ -22,6 +23,7 @@
 #include <stack>
 #include <set>
 #include <map>
+#include <fstream>
 
 #include "Math.h"
 #include "Indices.h"
@@ -35,6 +37,15 @@
 /* Depth Test */
 #define FARTHEST 1.f
 #define NEAREST -1.f
+
+#pragma region 최우진 코드
+#define SIGNUP 1
+#define SIGNIN 2
+#define LOGINSCENE 0
+#define LOBBYSCENE 1
+#define INGAMESCENE 2
+#define MAXPLAYER 1
+#pragma endregion
 
 #define	STD		std::
 

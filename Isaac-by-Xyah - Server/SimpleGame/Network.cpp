@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "Network.h"
 
-#define CLIENTSNUM 1
+#define CLIENTSNUM 3
 
-Network NW;
+Network Nw;
 
 Network::Network()
 {
@@ -75,12 +75,9 @@ void Network::AcceptClients()
 {
 	while (EnteredClientsNum < CLIENTSNUM)
 	{
-
 		// 데이터 통신에 사용할 변수
-
 		SOCKADDR_IN clientaddr;
 		int addrlen;
-
 
 		SOCKET client_sock;
 
@@ -91,45 +88,67 @@ void Network::AcceptClients()
 			err_display(const_cast<char*>("accept()"));
 			continue;
 		}
-		//cout << endl << "FileSender 접속 : IP 주소 = " << inet_ntoa(clientaddr.sin_addr) << ", 포트 번호= " << ntohs(clientaddr.sin_port) << endl;
-		//Arg arg = { this, clientNum };
-//		CreateThread(NULL, 0, this->ServerMain, (LPVOID)clientNum, 0, NULL);
-		// 벡터에다 client_sock 넣어주기 
+
 		ClientSockets.emplace_back(client_sock);
+
+		retval = send(client_sock, (char*)&EnteredClientsNum, sizeof(EnteredClientsNum), 0);
+		EnteredClientsNum++;
+		if (retval == SOCKET_ERROR) err_quit(const_cast<char*>("send()"));
 		PTHREAD_START_ROUTINE;
-		HANDLE hThread = CreateThread(NULL, 0, [](LPVOID)->DWORD {NW.testFunc(); return 0; }, 0, 0, NULL);
-	
+		HANDLE hThread = CreateThread(NULL, 0, [](LPVOID)->DWORD {Nw.testFunc(); return 0; }, 0, 0, NULL);
+
 		CloseHandle(hThread);
-		//clientNum++;
-		STD cout << EnteredClientsNum++ << STD endl;
+
 	}
 
+	//OBJ::PLAYER = Engine.AddObject();
+	//auto& ActorPhysics = Engine.GetPhysics(OBJ::PLAYER);
+	//ActorPhysics.SetPosition(5, 5, 0);
 }
 
 void Network::SendRenderData()
 {
+	//for (auto client_sock : ClientSockets) {
+	//	SOCKADDR_IN clientaddr;
+	//	int addrlen;
+	//	addrlen = sizeof(clientaddr);
+	//	getpeername(client_sock, (SOCKADDR *)&clientaddr, &addrlen);
+
+	//	int vecSize = NW.Positions.size();
+
+	//	retval = send(client_sock, (char*)&vecSize, sizeof(vecSize), 0);
+	//	if (retval == SOCKET_ERROR) err_quit(const_cast<char*>("send()"));
+
+	//	retval = send(client_sock, (char*)&NW.Positions[0], sizeof(DX XMVECTOR) * NW.Positions.size(), 0);
+	//	if (retval == SOCKET_ERROR) err_quit(const_cast<char*>("send()"));
+
+	//	//      retval = send(client_sock, (char*)&RenderDataPacket, sizeof(RenderDataPacket), 0);
+	//	//      if (retval == SOCKET_ERROR) err_quit(const_cast<char*>("send()"));
+
+	//	   //   retval = send(client_sock, (char*)&RenderDataPacket, sizeof(RenderDataPacket), 0);
+	//	   //   if (retval == SOCKET_ERROR) err_quit(const_cast<char*>("send()"));
+
+	//}
+	//Positions.clear();
+
+
 	for (auto client_sock : ClientSockets) {
 		SOCKADDR_IN clientaddr;
 		int addrlen;
+
 		addrlen = sizeof(clientaddr);
 		getpeername(client_sock, (SOCKADDR *)&clientaddr, &addrlen);
 
-		int vecSize = NW.Positions.size();
+		int vecSize = rendererData.size();
 
 		retval = send(client_sock, (char*)&vecSize, sizeof(vecSize), 0);
 		if (retval == SOCKET_ERROR) err_quit(const_cast<char*>("send()"));
 
-		retval = send(client_sock, (char*)&NW.Positions[0], sizeof(DX XMVECTOR) * NW.Positions.size(), 0);
+		
+		retval = send(client_sock, (char*)&rendererData[0], sizeof(RenderData) * rendererData.size(), 0);
 		if (retval == SOCKET_ERROR) err_quit(const_cast<char*>("send()"));
-
-		//      retval = send(client_sock, (char*)&RenderDataPacket, sizeof(RenderDataPacket), 0);
-		//      if (retval == SOCKET_ERROR) err_quit(const_cast<char*>("send()"));
-
-		   //   retval = send(client_sock, (char*)&RenderDataPacket, sizeof(RenderDataPacket), 0);
-		   //   if (retval == SOCKET_ERROR) err_quit(const_cast<char*>("send()"));
-
 	}
-	Positions.clear();
+	rendererData.clear();
 }
 
 
@@ -144,7 +163,7 @@ void Network::SendRenderData()
 
 void Network::testFunc()
 {
-	SOCKET client_sock = ClientSockets[CurrentClientNum];
+	SOCKET client_sock = ClientSockets[CurrentClientNum++];
 	while (1) {
 		SOCKADDR_IN clientaddr;
 		int addrlen;

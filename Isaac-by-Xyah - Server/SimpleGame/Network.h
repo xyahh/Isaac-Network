@@ -14,6 +14,20 @@ struct KeyData {
 };
 
 
+struct RenderData2 {
+	DX XMFLOAT2 Current;
+	DX XMFLOAT2 Total;
+	DX XMFLOAT3 SpriteOffset;
+	DX XMFLOAT2 SpriteSize;
+	size_t TextureID = -1;
+};
+
+struct RenderData {
+	DX XMFLOAT3 Position;
+	DX XMFLOAT4 Color;
+	RenderData2 RenderDataSet[3];
+};
+
 class Network
 {
 public:
@@ -30,6 +44,7 @@ public:
 //	DWORD WINAPI ServerMain(LPVOID p);
 	void testFunc();
 	STD vector<DX XMVECTOR> Positions;
+	STD vector <RenderData> rendererData;
 	STD queue<KeyData> InputQueue;
 	//STD vector<STD queue<KeyData>> InputQueues;
 	int recvn(SOCKET s, char * buf, int len, int flags);
@@ -44,4 +59,4 @@ private:
 
 
 
-extern Network NW;
+extern Network Nw;

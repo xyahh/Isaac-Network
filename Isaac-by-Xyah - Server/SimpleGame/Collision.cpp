@@ -37,7 +37,7 @@ void XM_CALLCONV ActorCollision::OnCollision
 	DX FXMVECTOR CollisionNormal
 )
 {
-	//Fill Here
+	//printf("Actor Collision\n");
 }
 
 void XM_CALLCONV ProjectileCollision::OnCollision
@@ -49,7 +49,7 @@ void XM_CALLCONV ProjectileCollision::OnCollision
 	DX FXMVECTOR CollisionNormal
 )
 {
-	//Fill Here
+	//printf("ProjectileCollision\n");
 }
 
 void XM_CALLCONV StructureCollision::OnCollision
@@ -66,4 +66,5 @@ void XM_CALLCONV StructureCollision::OnCollision
 	//float CollidingFriction = CollidingBody->GetFriction();
 	//if (MyFriction > CollidingFriction)
 	//	CollidingBody->SetFriction(MyFriction); 
+	//printf("StructureCollision\n");
 }

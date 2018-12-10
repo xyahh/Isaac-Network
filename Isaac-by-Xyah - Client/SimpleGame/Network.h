@@ -2,12 +2,25 @@
 #include "Renderer.h"
 #pragma pack(1)
 struct Pos {
-   int x;
-   char c;
-   int y;
+	int x;
+	char c;
+	int y;
 };
 #pragma pack()
 
+struct RenderData2 {
+	DX XMFLOAT2 Current;
+	DX XMFLOAT2 Total;
+	DX XMFLOAT3 SpriteOffset;
+	DX XMFLOAT2 SpriteSize;
+	size_t TextureID = -1;
+};
+
+struct RenderData {
+	DX XMFLOAT3 Position;
+	DX XMFLOAT4 Color;
+	RenderData2 RenderDataSet[3];
+};
 
 
 struct KeyData {
@@ -19,25 +32,28 @@ struct KeyData {
 class Network
 {
 public:
-   Network();
-   ~Network();
+	Network();
+	~Network();
 
-   void err_quit(char *msg);
+	void err_quit(char *msg);
 	void err_display(char *msg);
 	//static DWORD WINAPI ProcessClient(LPVOID arg);
 	//void recvstart();
 	//void testFunc(SOCKET sock);a
-	void sendInput(KeyData k);
-	STD vector<DX XMVECTOR> Positions;
-
+	void SendInput(KeyData k);
+	void ReceiveRenderData();
+	STD vector<DX XMFLOAT3> Positions;
+	STD vector <RenderData> rendererData;
 	void Init();
 
 	Renderer RenderDevice;
-	int TEX;
+	int TEX[5];
 	SOCKET clientSock;
 	int retval;
 	int recvn(SOCKET s, char * buf, int len, int flags);
+	int ClientNum;
 
+	int vecSize = 0;
 };
 
 struct Arg {
@@ -45,4 +61,4 @@ struct Arg {
 	SOCKET sock;
 };
 
-extern Network NW;
+extern Network Nw;

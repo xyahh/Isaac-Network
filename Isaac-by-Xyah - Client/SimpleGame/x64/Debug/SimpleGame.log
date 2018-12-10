@@ -1,3 +1,13 @@
-﻿  Renderer.cpp
-c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - client\simplegame\renderer.cpp(141): warning C4267: '=': conversion from 'size_t' to 'GLint', possible loss of data
-  SimpleGame.vcxproj -> C:\Users\Juan\Documents\University Stuff\Game Software\Isaac-Online\Isaac-by-Xyah - Client\x64\Debug\SimpleGame.exe
+﻿  Framework.cpp
+c:\users\seo\desktop\isaac-network 22h35m\isaac-network 22h35m\isaac-network\isaac-by-xyah - client\simplegame\framework.h(15): warning C4099: 'Input': 처음에는 'class'을(를) 사용하여 형식 이름을 표시했는데 이제는 'struct'을(를) 사용하여 표시합니다.
+  c:\users\seo\desktop\isaac-network 22h35m\isaac-network 22h35m\isaac-network\isaac-by-xyah - client\simplegame\framework.h(14): note: 'Input' 선언을 참조하십시오.
+  Gameplay.cpp
+c:\users\seo\desktop\isaac-network 22h35m\isaac-network 22h35m\isaac-network\isaac-by-xyah - client\simplegame\framework.h(15): warning C4099: 'Input': 처음에는 'class'을(를) 사용하여 형식 이름을 표시했는데 이제는 'struct'을(를) 사용하여 표시합니다.
+  c:\users\seo\desktop\isaac-network 22h35m\isaac-network 22h35m\isaac-network\isaac-by-xyah - client\simplegame\framework.h(14): note: 'Input' 선언을 참조하십시오.
+c:\users\seo\desktop\isaac-network 22h35m\isaac-network 22h35m\isaac-network\isaac-by-xyah - client\simplegame\gameplay.cpp(50): warning C4267: '인수': 'size_t'에서 'u_int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Network.cpp
+  SimpleGame.cpp
+c:\users\seo\desktop\isaac-network 22h35m\isaac-network 22h35m\isaac-network\isaac-by-xyah - client\simplegame\framework.h(15): warning C4099: 'Input': 처음에는 'class'을(를) 사용하여 형식 이름을 표시했는데 이제는 'struct'을(를) 사용하여 표시합니다.
+  c:\users\seo\desktop\isaac-network 22h35m\isaac-network 22h35m\isaac-network\isaac-by-xyah - client\simplegame\framework.h(14): note: 'Input' 선언을 참조하십시오.
+  코드를 생성하고 있습니다...
+  SimpleGame.vcxproj -> C:\Users\seo\Desktop\Isaac-Network 22h35m\Isaac-Network 22h35m\Isaac-Network\Isaac-by-Xyah - Client\x64\Debug\SimpleGame.exe

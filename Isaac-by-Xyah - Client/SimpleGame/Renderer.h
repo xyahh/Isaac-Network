@@ -28,7 +28,7 @@ public:
 	void DeleteTexture(u_int texID) const;
 
 	bool Initialize(int windowSizeX, int windowSizeY);
-
+	
 private:
 
 	void XM_CALLCONV DrawTexture(DX FXMVECTOR Position, DX FXMVECTOR Size, DX FXMVECTOR Color, u_int TexID) const;
@@ -38,6 +38,7 @@ private:
 	void CreateVertexBufferObjects();
 	DX XMVECTOR XM_CALLCONV GetGLPos(DX FXMVECTOR Position) const;
 	DX XMVECTOR XM_CALLCONV GetGLSize(DX FXMVECTOR Size) const;
+	
 
 private:
 

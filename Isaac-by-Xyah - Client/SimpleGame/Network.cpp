@@ -2,11 +2,11 @@
 #include "Network.h"
 
 
-Network NW;
+Network Nw;
 
 Network::Network()
 {
-	
+
 
 
 }
@@ -108,7 +108,7 @@ void Network::err_display(char *msg)
 //	
 //}
 
-void Network::sendInput(KeyData k)
+void Network::SendInput(KeyData k)
 {
 	retval = send(clientSock, (char*)&k, sizeof(k), 0);
 	if (retval == SOCKET_ERROR) err_quit(const_cast<char*>("send()"));
@@ -118,8 +118,11 @@ void Network::sendInput(KeyData k)
 void Network::Init()
 {
 	RenderDevice.Initialize(800, 800);
-	TEX = RenderDevice.GenerateTexture("./Resources/Characters/Isaac.png");
-
+	TEX[0] = RenderDevice.GenerateTexture("./Resources/Characters/basic_body.png");
+	TEX[1] = RenderDevice.GenerateTexture("./Resources/Characters/cain_head.png");
+	TEX[2] = RenderDevice.GenerateTexture("./Resources/explosion.png");
+	TEX[3] = RenderDevice.GenerateTexture("./Resources/tear.png");
+	TEX[4] = RenderDevice.GenerateTexture("./Resources/Levels/Depths.png");
 
 	//NW.Positions.resize(100);
 
@@ -129,13 +132,9 @@ void Network::Init()
 		err_quit("winsock initialize error");
 	//return -1;
 
-
-
- // socket()
+	// socket()
 	clientSock = socket(AF_INET, SOCK_STREAM, 0);
 	if (clientSock == INVALID_SOCKET) err_quit(const_cast<char*>("socket()"));
-
-	
 
 	// connect()
 	SOCKADDR_IN serveraddr;
@@ -147,10 +146,19 @@ void Network::Init()
 
 	retval = connect(clientSock, (SOCKADDR *)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) err_quit(const_cast<char*>("connect()"));
-	
+
+	retval = recv(clientSock, (char *)&ClientNum, sizeof(ClientNum), 0);
+	if (retval == SOCKET_ERROR) {
+		err_display(const_cast<char*>("recv()"));
+		closesocket(clientSock);
+		exit(-1);
+	}
+	printf("clientNum : %d\n", ClientNum);
+
+
 	//recvstart();
 	// 이부분은 메인에서 따로 호출필요 
-//	HANDLE hThread = CreateThread(NULL, 0, NW.ProcessClient, (LPVOID)sock, 0, NULL);
+	//	HANDLE hThread = CreateThread(NULL, 0, NW.ProcessClient, (LPVOID)sock, 0, NULL);
 }
 
 int Network::recvn(SOCKET s, char * buf, int len, int flags)
@@ -171,5 +179,51 @@ int Network::recvn(SOCKET s, char * buf, int len, int flags)
 	}
 
 	return (len - left);
+
+}
+
+void Network::ReceiveRenderData()
+{
+	while (1)
+	{
+		/*retval = recvn(NW.clientSock, (char*)&vecSize, sizeof(int), 0);
+		if (retval == SOCKET_ERROR) {
+		err_display(const_cast<char*>("recv()"));
+		exit(0);
+		}
+
+		Positions.resize(vecSize);
+		retval = recvn(clientSock, (char*)&Positions[0], sizeof(DX XMVECTOR) * vecSize, 0);
+		if (retval == SOCKET_ERROR) {
+		err_display(const_cast<char*>("recv()"));
+		exit(0);
+		}*/
+		/*int tmp = 0;
+		static bool skipRecv = false;
+
+		if (skipRecv == false)
+		{
+			retval = recvn(NW.clientSock, (char*)&tmp, sizeof(int), 0);
+			if (retval == SOCKET_ERROR) {
+				err_display(const_cast<char*>("recv()"));
+				exit(0);
+			}
+			skipRecv = true;
+		}*/
+
+
+		retval = recvn(Nw.clientSock, (char*)&vecSize, sizeof(int), 0);
+		if (retval == SOCKET_ERROR) {
+			err_display(const_cast<char*>("recv()"));
+			exit(0);
+		}
+
+		rendererData.resize(vecSize);
+		retval = recvn(clientSock, (char*)&rendererData[0], sizeof(RenderData) * vecSize, 0);
+		if (retval == SOCKET_ERROR) {
+			err_display(const_cast<char*>("recv()"));
+			exit(0);
+		}
+	}
 
 }

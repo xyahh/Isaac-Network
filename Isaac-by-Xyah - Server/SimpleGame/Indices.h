@@ -51,6 +51,8 @@ namespace CMD
 namespace OBJ
 {
 	extern size_t PLAYER;
+	extern size_t PLAYER2;
+	extern size_t PLAYER3;
 
 	namespace SPRITE
 	{

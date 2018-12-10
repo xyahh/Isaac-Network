@@ -6,7 +6,7 @@ Cyan Engine;
 bool Cyan::Init(const STD string& Title, int X, int Y, bool Dev)
 {
 	m_Window.Initialize(Title, X, Y, Dev);
-	NW.AcceptClients();
+	Nw.AcceptClients();
 	Sound::Initialize();
 	return m_Renderer.Initialize();
 }
@@ -98,12 +98,31 @@ void Cyan::Update()
 			Sprite.Update();
 	}
 
+	/* put key to Input vector from Inputqueue */
+	if (Nw.InputQueue.size() != 0)
+	{
+		//lock
+		
+		auto keyData = Nw.InputQueue.front();
+		Nw.InputQueue.pop();
+		printf("%d     %d      %d\n", keyData.key, keyData.pressed, keyData.clientNum);
+		if (keyData.pressed)
+			m_Input[keyData.clientNum].m_Pushed.emplace_back(keyData.key);
+
+		else if (!keyData.pressed)
+		{
+			EraseByValue(m_Input[keyData.clientNum].m_Pushed, keyData.key);
+			m_Input[keyData.clientNum].m_Released.emplace_back(keyData.key);
+		}
+	}
+
+
 	/* State & Input Update */
 	for (size_t i = 0; i < m_Input.size(); ++i)
 	{
 		if (m_States[i].second.empty())
 			continue;
-		m_Input[i].ProcessInput();
+		//m_Input[i].ProcessInput();
 		m_Controllers[i][m_States[i].second.top()->Name()].HandleControls(i,
 			m_Input[i].m_Pushed, m_Input[i].m_Released);
 		m_Input[i].m_Released.clear(); // Call only once;
@@ -129,16 +148,16 @@ void Cyan::Render(float fInterpolation)
 	for (size_t i = 0; i < m_Graphics.size(); ++i)
 	{
 		m_Graphics[i].Render(m_Renderer, m_Physics[i], m_Sprites[i], fInterpolation);
-		Physics& ActorPhysics = Engine.GetPhysics(i);
-		DX XMVECTOR Position = DX Add
-		(
-			DX Scale(ActorPhysics.GetPosition(), fInterpolation),
-			DX Scale(ActorPhysics.GetPrevPosition(), 1.f - fInterpolation)
-		);
-		NW.Positions.emplace_back(Position);
+		//Physics& ActorPhysics = Engine.GetPhysics(i);
+		//DX XMVECTOR Position = DX Add
+		//(
+		//	DX Scale(ActorPhysics.GetPosition(), fInterpolation),
+		//	DX Scale(ActorPhysics.GetPrevPosition(), 1.f - fInterpolation)
+		//);
+		//NW.Positions.emplace_back(Position);
 	}
-	if(!NW.Positions.empty())
-		NW.SendRenderData();
+	if(!Nw.rendererData.empty())
+		Nw.SendRenderData();
 }
 
 void Cyan::AddObject(size_t * Out)

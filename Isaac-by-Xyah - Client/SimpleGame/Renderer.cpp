@@ -377,3 +377,4 @@ void XM_CALLCONV Renderer::DrawSprite(DX FXMVECTOR Position, DX FXMVECTOR Size,
 
 	glDisable(GL_BLEND);
 }
+

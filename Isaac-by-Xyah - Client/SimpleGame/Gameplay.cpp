@@ -13,48 +13,64 @@ void Gameplay::Exit()
 }
 
 
-void Gameplay::Render(float fInterpolation) 
-{ 
-
+void Gameplay::Render(float fInterpolation)
+{
 	int Size = 0;
 
-	NW.retval = recv(NW.clientSock, (char*)&Size, sizeof(int ), 0);
-	if (NW.retval == SOCKET_ERROR) {
-		NW.err_display(const_cast<char*>("recv()"));
-		exit(0);
-	}
-
-	NW.Positions.resize(Size);
-	NW.retval = NW.recvn(NW.clientSock, (char*)&NW.Positions[0], sizeof(DX XMVECTOR) * NW.Positions.size(), 0);
-	if (NW.retval == SOCKET_ERROR) {
-		NW.err_display(const_cast<char*>("recv()"));
-		exit(0);
-	}
-
-	for (size_t i = 0; i < NW.Positions.size(); ++i) 
+	/*for (size_t i = 0; i < NW.Positions.size(); ++i)
 	{
-		NW.RenderDevice.DrawTexRect(
-			NW.Positions[i],
-			{ 1.25, 1.25 },
-			{ 1.f, 1.f, 1.f, 1.f },
-			NW.TEX
-		);
-		/*NW.RenderDevice.DrawSprite(
-			NW.Positions[i],
-			{ 1.25, 1.25 },
-			{ 1.f, 1.f, 1.f, 1.f },
-			NW.TEX,
-			{ 0, 0 },
-			{ 1, 1 }
-			
-		);*/
-	}
+	NW.RenderDevice.DrawTexRect(
+	DX3 Load(NW.Positions[i]),
+	{ 1.25, 1.25 },
+	{ 1.f, 1.f, 1.f, 1.f },
+	NW.TEX[0]
+	);
+	}*/
 
+	Nw.RenderDevice.DrawTexRect(
+		{ 0, 0, 10 },
+		{ 20, 20 },
+		{ 1.f, 1.f, 1.f, 1.f },
+		Nw.TEX[4]
+	);
+
+
+	for (size_t i = 0; i < Nw.rendererData.size(); ++i)
+	{
+		for (size_t j = 0; Nw.rendererData[i].RenderDataSet[j].TextureID != -1; j++)
+		{
+			Nw.RenderDevice.DrawSprite
+			(
+				DX Add(DX3 Load(Nw.rendererData[i].Position), DX3 Load(Nw.rendererData[i].RenderDataSet[j].SpriteOffset))
+				, DX2 Load(Nw.rendererData[i].RenderDataSet[j].SpriteSize)
+				, DX4 Load(Nw.rendererData[i].Color)
+				, Nw.rendererData[i].RenderDataSet[j].TextureID
+				, DX2 Load(Nw.rendererData[i].RenderDataSet[j].Current)
+				, DX2 Load(Nw.rendererData[i].RenderDataSet[j].Total)
+			);
+		}
+	}
+	//for (auto& i : ObjectSprite)
+	//{
+	//	DX XMVECTOR SpriteSize = i.GetSize();
+	//	DX XMVECTOR SpriteOffset = i.GetOffset();
+
+	//	//NW.RenderDevice.DrawShadow(Position, SpriteSize, Color);
+	//	NW.RenderDevice.DrawSprite
+	//	(
+	//		DX Add(NW.Positions[i], SpriteOffset)
+	//		, SpriteSize
+	//		, Color
+	//		, Engine.GetTexture(i.GetTexture())
+	//		, Sprite.GetCurrent()
+	//		, Sprite.GetTotal()
+	//	);
+	//}
 }
 
-void Gameplay::Update() 
-{ 
-	
+void Gameplay::Update()
+{
+
 	// recv
 	//Engine.Update();
 }

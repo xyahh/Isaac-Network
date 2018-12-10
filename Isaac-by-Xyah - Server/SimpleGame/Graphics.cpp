@@ -27,23 +27,37 @@ void Graphics::Render (
 		DX Scale(ObjectPhysics.GetPosition(), Interpolation),
 		DX Scale(ObjectPhysics.GetPrevPosition(), 1.f - Interpolation)
 	);
-
+	RenderData dataSet;
+	RenderData2 dataSet2;
+	int idx = 0;
 	for (auto& Sprite : ObjectSprite)
 	{
-		DX XMVECTOR SpriteSize = Sprite.GetSize();
 		DX XMVECTOR SpriteOffset = Sprite.GetOffset();
 
-		RenderDevice.DrawShadow(Position, SpriteSize, Color);
+		dataSet2.TextureID = Engine.GetTexture(Sprite.GetTexture());
+		dataSet2.Current = DX2 Store(Sprite.GetCurrent());
+		dataSet2.Total = DX2 Store(Sprite.GetTotal());
+		dataSet2.SpriteOffset = DX3 Store(Sprite.GetOffset());
+		dataSet2.SpriteSize = DX2 Store(Sprite.GetSize());
+
+		dataSet.RenderDataSet[idx++] = dataSet2;
+		RenderDevice.DrawShadow(Position, Sprite.GetSize(), Color);
 		RenderDevice.DrawSprite
 		(
 			DX Add(Position, SpriteOffset)
-			, SpriteSize
+			, Sprite.GetSize()
 			, Color
 			, Engine.GetTexture(Sprite.GetTexture())
 			, Sprite.GetCurrent()
 			, Sprite.GetTotal()
 		);
 	}
+	dataSet.Color = DX4 Store(Color);
+	//DX Print(Position);
+	//printf("\n");
+	dataSet.Position = DX3 Store(Position);
+	//printf("%f %f %f\n", dataSet.Position.x, dataSet.Position.y, dataSet.Position.z);
+	Nw.rendererData.emplace_back(dataSet);
 
 #ifdef CYAN_DEBUG_COLLISION
 	DrawBoundingBoxes(RenderDevice, Position, ObjectPhysics.Box().GetDimensions());

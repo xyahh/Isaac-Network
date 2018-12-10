@@ -141,8 +141,8 @@ void Framework::Keyboard()
 					KeyData k;
 					k.key = i.first;
 					k.pressed = true;
-					k.clientNum = 0;
-					NW.sendInput(k);
+					k.clientNum = Nw.ClientNum;
+					Nw.SendInput(k);
 					i.second.pressed = true;
 					i.second.released = false;
 					STD cout << k.key << " " << k.pressed << STD endl;
@@ -154,8 +154,8 @@ void Framework::Keyboard()
 				KeyData k;
 				k.key = i.first;
 				k.pressed = false;
-				k.clientNum = 0;
-				NW.sendInput(k);
+				k.clientNum = Nw.ClientNum;
+				Nw.SendInput(k);
 				i.second.released = true;
 				i.second.pressed = false;
 				STD cout << k.key << " " << k.pressed << " " << k.clientNum <<  STD endl;
@@ -194,6 +194,8 @@ void Framework::ChangeScenes()
 
 void Framework::Run()
 {
+	Nw.Init();
+
 	Scene::m_Framework = this;
 	BindFunctions();
 	ChangeScenes();
@@ -207,10 +209,10 @@ void Framework::Run()
 
 	ResetClock();
 
-	NW.Init();
+	HANDLE hThread1 = CreateThread(NULL, 0, [](LPVOID)->DWORD { Fw.Keyboard(); return 0; }, 0, 0, NULL);
+	HANDLE hThread2 = CreateThread(NULL, 0, [](LPVOID)->DWORD { Nw.ReceiveRenderData(); return 0; }, 0, 0, NULL);
 
-	HANDLE hThread = CreateThread(NULL, 0, [](LPVOID)->DWORD { Fw.Keyboard(); return 0; }, 0, 0, NULL);
-	CloseHandle(hThread);
+	CloseHandle(hThread1);
 
 	glutMainLoop();
 }

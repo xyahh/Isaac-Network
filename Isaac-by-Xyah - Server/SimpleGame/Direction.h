@@ -1,10 +1,10 @@
 #pragma once
 enum Direction
 {
-	Up,
-	Down,
-	Left,
-	Right,
+	Up = 3,
+	Down = 2,
+	Left = 1,
+	Right = 0,
 };
 
 inline DX XMVECTOR GetDirectionVector(u_int dir)

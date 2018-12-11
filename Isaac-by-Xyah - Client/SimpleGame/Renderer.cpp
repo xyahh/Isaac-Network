@@ -360,7 +360,7 @@ void XM_CALLCONV Renderer::DrawSprite(DX FXMVECTOR Position, DX FXMVECTOR Size,
 	glUniform2f(u_Size, DX GetX(GLSize), DX GetY(GLSize));
 	glUniform4f(u_Color, DX GetX(Color), DX GetY(Color), DX GetZ(Color), DX GetW(Color));
 	glUniform1f(u_CurrSeqX, DX GetX(CurrentSprite));
-	glUniform1f(u_CurrSeqY, DX GetY(CurrentSprite));
+	glUniform1f(u_CurrSeqY, DX GetY(TotalSprite) - DX GetY(CurrentSprite) - 1);
 	glUniform1f(u_TotalSeqX, DX GetX(TotalSprite));
 	glUniform1f(u_TotalSeqY, DX GetY(TotalSprite));
 

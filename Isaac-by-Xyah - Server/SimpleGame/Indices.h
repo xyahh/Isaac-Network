@@ -16,6 +16,7 @@ namespace ST
 	extern size_t IN_AIR;
 	extern size_t CHARGE_SLAM;
 	extern size_t SLAM;
+	extern size_t DAMAGED;
 
 	extern size_t SHOOT;
 }

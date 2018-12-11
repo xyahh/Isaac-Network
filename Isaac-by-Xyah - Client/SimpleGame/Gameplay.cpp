@@ -39,11 +39,15 @@ void Gameplay::Render(float fInterpolation)
 	{
 		for (size_t j = 0; Nw.rendererData[i].RenderDataSet[j].TextureID != -1; j++)
 		{
+			DX XMVECTOR Position = DX3 Load(Nw.rendererData[i].Position);
+			DX XMVECTOR Size = DX2 Load(Nw.rendererData[i].RenderDataSet[j].SpriteSize);
+			DX XMVECTOR Color = DX4 Load(Nw.rendererData[i].Color);
+			Nw.RenderDevice.DrawShadow(Position, Size, Color);
 			Nw.RenderDevice.DrawSprite
 			(
-				DX Add(DX3 Load(Nw.rendererData[i].Position), DX3 Load(Nw.rendererData[i].RenderDataSet[j].SpriteOffset))
-				, DX2 Load(Nw.rendererData[i].RenderDataSet[j].SpriteSize)
-				, DX4 Load(Nw.rendererData[i].Color)
+				DX Add(Position, DX3 Load(Nw.rendererData[i].RenderDataSet[j].SpriteOffset))
+				, Size
+				, Color
 				, Nw.rendererData[i].RenderDataSet[j].TextureID
 				, DX2 Load(Nw.rendererData[i].RenderDataSet[j].Current)
 				, DX2 Load(Nw.rendererData[i].RenderDataSet[j].Total)

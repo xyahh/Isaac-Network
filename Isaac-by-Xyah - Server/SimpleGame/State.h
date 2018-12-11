@@ -1,4 +1,14 @@
 #pragma once
+namespace ST
+{
+	extern size_t IDLE;
+	extern size_t MOVE;
+	extern size_t CHARGE_JUMP;
+	extern size_t IN_AIR;
+	extern size_t CHARGE_SLAM;
+	extern size_t SLAM;
+	extern size_t SHOOT;
+}
 
 class State
 {
@@ -15,6 +25,7 @@ public:
 	virtual State* Make() = 0;
 
 	virtual size_t Name() const = 0;
+
 
 protected:
 	State* Assemble(State* pState)
@@ -38,23 +49,23 @@ private:
 
 	virtual size_t Name() const { return size_t(); }
 
-	virtual State* Make()	{	return Assemble(new NullState); }
+	virtual State* Make() { return Assemble(new NullState); }
 };
 
 class IdleState : public State
 {
 public:
 
-	IdleState() 
-	{ 
+	IdleState()
+	{
 #ifdef CYAN_DEBUG_STATES
-		printf("IdleState Created!\n"); 
+		printf("IdleState Created!\n");
 #endif
 	}
-	virtual ~IdleState() 
-	{ 
+	virtual ~IdleState()
+	{
 #ifdef CYAN_DEBUG_STATES
-		printf("IdleState Destroyed!\n"); 
+		printf("IdleState Destroyed!\n");
 #endif
 	}
 
@@ -66,23 +77,23 @@ private:
 
 	virtual size_t Name() const { return ST::IDLE; }
 
-	virtual State* Make()	{ return Assemble(new IdleState); }
+	virtual State* Make() { return Assemble(new IdleState); }
 };
 
 class MoveState : public State
 {
 public:
 
-	MoveState() 
+	MoveState()
 	{
 #ifdef CYAN_DEBUG_STATES
 		printf("MoveState Created!\n");
 #endif 
 	}
-	virtual ~MoveState() 
-	{ 
+	virtual ~MoveState()
+	{
 #ifdef CYAN_DEBUG_STATES
-		printf("MoveState Destroyed!\n"); 
+		printf("MoveState Destroyed!\n");
 #endif 
 	}
 
@@ -119,7 +130,7 @@ private:
 	virtual void Enter(size_t ObjectIndex);
 	virtual void Update(size_t ObjectIndex);
 	virtual void Exit(size_t ObjectIndex);
-	
+
 	virtual size_t Name() const { return ST::CHARGE_JUMP; }
 
 	virtual State* Make() { return Assemble(new ChargeJumpState(RageRate, Force)); }
@@ -136,15 +147,15 @@ public:
 
 	InAirState(float AirResistance) :
 		AirResistance(AirResistance)
-	{ 
+	{
 #ifdef CYAN_DEBUG_STATES
-		printf("InAirState Created!\n"); 
+		printf("InAirState Created!\n");
 #endif
 	}
 	virtual ~InAirState()
-	{ 
+	{
 #ifdef CYAN_DEBUG_STATES
-		printf("InAirState Destroyed!\n"); 
+		printf("InAirState Destroyed!\n");
 #endif
 	}
 
@@ -255,9 +266,47 @@ private:
 	virtual size_t Name() const { return ST::SHOOT; }
 
 	virtual State* Make() { return Assemble(new ShootState(TexID, ShootingRate, ShootingForce)); }
-	
+
 	float Time;
 	float ShootingRate;
 	float ShootingForce;
 	u_int TexID;
+};
+
+class DamagedState : public State
+{
+public:
+
+	DamagedState(float Duration, float BlinkingRate) :
+		Duration(Duration), BlinkingRate(BlinkingRate)
+	{
+#ifdef CYAN_DEBUG_STATES
+		printf("DamagedState Created!\n");
+#endif
+	}
+	virtual ~DamagedState()
+	{
+#ifdef CYAN_DEBUG_STATES
+		printf("DamagedState Destroyed!\n");
+#endif
+	}
+
+private:
+
+	virtual void Enter(size_t ObjectIndex);
+	virtual void Update(size_t ObjectIndex);
+	virtual void Exit(size_t ObjectIndex);
+
+	virtual size_t Name() const { return ST::DAMAGED; }
+
+	virtual State* Make() { return Assemble(new DamagedState(Duration, BlinkingRate)); }
+
+
+	u_int Type;
+	float Duration;
+	float BlinkingRate;
+	float BlinkingTimer;
+	float DurationTimer;
+	DX XMFLOAT4 Color;
+	int Alpha;
 };

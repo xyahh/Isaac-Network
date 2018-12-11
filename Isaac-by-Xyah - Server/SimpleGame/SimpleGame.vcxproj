@@ -159,7 +159,7 @@
     <ClInclude Include="DevConsole.h" />
     <ClInclude Include="Direction.h" />
     <ClInclude Include="Network.h" />
-    <ClInclude Include="Subject.h" />
+    <ClInclude Include="EventDispatcher.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="CyanEngine.h" />
     <ClInclude Include="Gamepad.h" />
@@ -189,7 +189,7 @@
     <ClCompile Include="Descriptor.cpp" />
     <ClCompile Include="DevConsole.cpp" />
     <ClCompile Include="Network.cpp" />
-    <ClCompile Include="Subject.cpp" />
+    <ClCompile Include="EventDispatcher.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="CyanEngine.cpp" />
     <ClCompile Include="Gamepad.cpp" />

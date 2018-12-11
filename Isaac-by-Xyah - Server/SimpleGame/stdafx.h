@@ -25,8 +25,11 @@
 #include <map>
 #include <fstream>
 
+#define	STD		std::
+
 #include "Math.h"
 #include "Indices.h"
+#include "EventDispatcher.h"
 
 #define CYAN_DEBUG_STATES
 #define CYAN_DEBUG_COLLISION
@@ -46,8 +49,6 @@
 #define INGAMESCENE 2
 #define MAXPLAYER 1
 #pragma endregion
-
-#define	STD		std::
 
 constexpr float UPDATE_FREQUENCY{ 120.f };
 constexpr float UPDATE_TIME{ 1.f / UPDATE_FREQUENCY };

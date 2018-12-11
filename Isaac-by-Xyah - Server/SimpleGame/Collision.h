@@ -61,13 +61,31 @@ public:
 	virtual void XM_CALLCONV OnCollision
 	(
 		size_t MyID,
-		Physics* MyBody, 
+		Physics* MyBody,
 		size_t CollidingID,
-		Physics* CollidingBody, 
+		Physics* CollidingBody,
 		DX FXMVECTOR CollisionNormal
 	);
 };
 
+
+class ExplosionCollision : public BasicCollision
+{
+public:
+	ExplosionCollision() {}
+	virtual ~ExplosionCollision() {}
+
+	virtual void XM_CALLCONV OnCollision
+	(
+		size_t MyID,
+		Physics* MyBody,
+		size_t CollidingID,
+		Physics* CollidingBody,
+		DX FXMVECTOR CollisionNormal
+	);
+
+private:
+};
 
 NS_COLLISION_START
 
@@ -75,24 +93,25 @@ static BasicCollision		Basic;
 static ActorCollision		Actor;
 static ProjectileCollision	Projectile;
 static StructureCollision	Structure;
+static ExplosionCollision	Explosion;
 
 class BBox
-	{
-	public:
-		BBox() :
-			Size(0.f, 0.f, 0.f) {}
+{
+public:
+	BBox() :
+		Size(0.f, 0.f, 0.f) {}
 
-		void XM_CALLCONV SetDimensions(DX FXMVECTOR v);
-		DX XMVECTOR XM_CALLCONV GetDimensions() const;
-		friend void XM_CALLCONV GetExtents(DX XMVECTOR* Min, DX XMVECTOR* Max, DX FXMVECTOR position, const BBox& box);
+	void XM_CALLCONV SetDimensions(DX FXMVECTOR v);
+	DX XMVECTOR XM_CALLCONV GetDimensions() const;
+	friend void XM_CALLCONV GetExtents(DX XMVECTOR* Min, DX XMVECTOR* Max, DX FXMVECTOR position, const BBox& box);
 
-	private:
-		DX XMFLOAT3	Size;
-	};
+private:
+	DX XMFLOAT3	Size;
+};
 
 inline DX XMVECTOR XM_CALLCONV GetBBoxCenter(DX FXMVECTOR ObjectPosition, float BBoxHeight)
 {
-	return DX Add(ObjectPosition, {0.f, 0.f, BBoxHeight * 0.5f});
+	return DX Add(ObjectPosition, { 0.f, 0.f, BBoxHeight * 0.5f });
 }
 
 inline void XM_CALLCONV GetExtents(DX XMVECTOR* Min, DX XMVECTOR* Max, DX FXMVECTOR position, const BBox& box)
@@ -127,9 +146,9 @@ inline DX XMVECTOR XM_CALLCONV GetNormal(DX FXMVECTOR A_Min, DX FXMVECTOR A_Max,
 
 	float FA = DX4 MagnitudeSQ(DX Multiply(DiffA, MinA));
 	float FB = DX4 MagnitudeSQ(DX Multiply(DiffB, MinB));
-	if (FA < FB) return 
-		MinA;	
-	else return 
+	if (FA < FB) return
+		MinA;
+	else return
 		MinB;
 }
 

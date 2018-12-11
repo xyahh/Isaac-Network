@@ -51,7 +51,7 @@ void XM_CALLCONV ProjectileCollision::OnCollision
 	Descriptor& MyDesc = Engine.GetDescriptor(MyID);
 	Descriptor& CollidingDesc = Engine.GetDescriptor(CollidingID);
 
-	if (MyDesc.Team != CollidingDesc.Team && CollidingDesc.Type == ObjectType::Actor)
+	if (MyDesc.Team != CollidingDesc.Team && CollidingDesc.Type == ObjectType::Actor && CollidingDesc.Value > 0.f)
 	{
 		CollidingDesc.Value -= MyDesc.Value;
 		Engine.ChangeState(CollidingID, ST::DAMAGED);
@@ -87,7 +87,7 @@ void XM_CALLCONV ExplosionCollision::OnCollision
 	Descriptor& MyDesc = Engine.GetDescriptor(MyID);
 	Descriptor& CollidingDesc = Engine.GetDescriptor(CollidingID);
 
-	if (MyDesc.Team != CollidingDesc.Team && CollidingDesc.Type == ObjectType::Actor)
+	if (MyDesc.Team != CollidingDesc.Team && CollidingDesc.Type == ObjectType::Actor&& CollidingDesc.Value > 0.f)
 	{
 		DX XMVECTOR v = DX Subtract(CollidingBody->GetPosition(), MyBody->GetPosition());
 		v = DX2 Normalize(v);

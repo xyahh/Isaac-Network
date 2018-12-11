@@ -27,6 +27,13 @@ void Cyan::MainLoop()
 
 		m_Renderer.Prepare();
 		Render(m_Timer.Interpolation());
+		static float FixedSendTime = 0;
+		FixedSendTime += UPDATE_TIME;
+		if (FixedSendTime >= 1.0 / 30.f)
+		{
+			if (!Nw.rendererData.empty())
+				Nw.SendRenderData();
+		}
 		m_Window.SwapBuffers();
 	}
 	Destroy();
@@ -163,8 +170,7 @@ void Cyan::Render(float fInterpolation)
 		//);
 		//NW.Positions.emplace_back(Position);
 	}
-	if (!Nw.rendererData.empty())
-		Nw.SendRenderData();
+	
 }
 
 void Cyan::AddObject(size_t * Out)

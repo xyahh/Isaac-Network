@@ -1,30 +1,52 @@
-﻿  Collision.cpp
+﻿  stdafx.cpp
+  Collision.cpp
   Command.cpp
   Controller.cpp
   CyanEngine.cpp
+  Descriptor.cpp
+  DevConsole.cpp
+c:\users\seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\devconsole.cpp(12): warning C4302: 'reinterpret_cast': 'HANDLE'에서 'long'(으)로 잘립니다.
+  EventDispatcher.cpp
+  Gamepad.cpp
   Gameplay.cpp
-c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\gameplay.cpp(59): warning C4101: 'PLAYER2': unreferenced local variable
-c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\gameplay.cpp(106): warning C4101: 'PLAYER3': unreferenced local variable
-c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\cyanengine.h(117): warning C4267: 'argument': conversion from 'size_t' to 'u_int', possible loss of data
-  c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\cyanengine.h(74): note: see reference to function template instantiation 'void Cyan::Add<T,State*,size_t&,float&,float&>(std::vector<State *,std::allocator<_Ty>> &,size_t *,size_t &,float &,float &)' being compiled
+c:\users\seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\gameplay.cpp(72): warning C4101: 'PLAYER2' :참조되지 않은 지역 변수입니다.
+c:\users\seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\gameplay.cpp(120): warning C4101: 'PLAYER3' :참조되지 않은 지역 변수입니다.
+c:\users\seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\cyanengine.h(117): warning C4267: '인수': 'size_t'에서 'u_int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  c:\users\seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\cyanengine.h(74): note: 컴파일 중인 함수 템플릿 인스턴스화 'void Cyan::Add<T,State*,size_t&,float&,float&>(std::vector<State *,std::allocator<_Ty>> &,size_t *,size_t &,float &,float &)'에 대한 참조를 확인하십시오.
           with
           [
               T=ShootState,
               _Ty=State *
           ]
-  c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\gameplay.cpp(161): note: see reference to function template instantiation 'void Cyan::AddStatePrototype<ShootState,size_t&,float,float>(size_t *,size_t &,float &&,float &&)' being compiled
+  c:\users\seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\gameplay.cpp(24): note: 컴파일 중인 함수 템플릿 인스턴스화 'void Cyan::AddStatePrototype<ShootState,size_t&,float,float>(size_t *,size_t &,float &&,float &&)'에 대한 참조를 확인하십시오.
   Graphics.cpp
+  Indices.cpp
   Input.cpp
   Logo.cpp
   Menu.cpp
+  Network.cpp
+c:\users\seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\network.cpp(56): warning C4477: 'printf' : 서식 문자열 '%s'에 'char *' 형식의 인수가 필요하지만 variadic 인수 2의 형식이 'LPCTSTR'입니다.
+  c:\users\seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\network.cpp(56): note: 서식 문자열에서 '%ls'을(를) 사용하는 것이 좋습니다.
+  c:\users\seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\network.cpp(56): note: 서식 문자열에서 '%lls'을(를) 사용하는 것이 좋습니다.
+  c:\users\seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\network.cpp(56): note: 서식 문자열에서 '%Ls'을(를) 사용하는 것이 좋습니다.
+  c:\users\seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\network.cpp(56): note: 서식 문자열에서 '%ws'을(를) 사용하는 것이 좋습니다.
+c:\users\seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\network.cpp(83): warning C4091: '': 변수를 선언하지 않으면 'DWORD (__cdecl *)(LPVOID)' 왼쪽은 무시됩니다.
+c:\users\seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\network.cpp(130): warning C4267: '초기화 중': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\network.cpp(136): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   Physics.cpp
   Renderer.cpp
   Scene.cpp
   SimpleGame.cpp
+  Sound.cpp
+  코드를 생성하고 있습니다...
+c:\users\seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\cyanengine.h(40): warning C4715: 'Cyan::GetIndex': 모든 제어 경로에서 값을 반환하지는 않습니다.
+c:\users\seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\cyanengine.h(32): warning C4715: 'Cyan::GetID': 모든 제어 경로에서 값을 반환하지는 않습니다.
+  컴파일하고 있습니다...
+  Sprite.cpp
   State.cpp
-c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\state.cpp(298): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\seo\desktop\isaac-network\isaac-by-xyah - server\simplegame\state.cpp(298): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Timer.cpp
   Window.cpp
-  Generating Code...
-c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\cyanengine.h(40): warning C4715: 'Cyan::GetIndex': not all control paths return a value
-c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - server\simplegame\cyanengine.h(32): warning C4715: 'Cyan::GetID': not all control paths return a value
-  SimpleGame.vcxproj -> C:\Users\Juan\Documents\University Stuff\Game Software\Isaac-Online\Isaac-by-Xyah - Server\x64\Debug\SimpleGame.exe
+  World.cpp
+  코드를 생성하고 있습니다...
+  SimpleGame.vcxproj -> C:\Users\seo\Desktop\Isaac-Network\Isaac-by-Xyah - Server\x64\Debug\SimpleGame.exe

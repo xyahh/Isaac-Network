@@ -1,3 +1,6 @@
-﻿  Renderer.cpp
-c:\users\juan\documents\university stuff\game software\isaac-online\isaac-by-xyah - client\simplegame\renderer.cpp(141): warning C4267: '=': conversion from 'size_t' to 'GLint', possible loss of data
-  SimpleGame.vcxproj -> C:\Users\Juan\Documents\University Stuff\Game Software\Isaac-Online\Isaac-by-Xyah - Client\x64\Debug\SimpleGame.exe
+﻿  Framework.cpp
+c:\users\seo\desktop\isaac-network\isaac-by-xyah - client\simplegame\framework.h(15): warning C4099: 'Input': 처음에는 'class'을(를) 사용하여 형식 이름을 표시했는데 이제는 'struct'을(를) 사용하여 표시합니다.
+  c:\users\seo\desktop\isaac-network\isaac-by-xyah - client\simplegame\framework.h(14): note: 'Input' 선언을 참조하십시오.
+  Network.cpp
+  코드를 생성하고 있습니다...
+  SimpleGame.vcxproj -> C:\Users\seo\Desktop\Isaac-Network\Isaac-by-Xyah - Client\x64\Debug\SimpleGame.exe

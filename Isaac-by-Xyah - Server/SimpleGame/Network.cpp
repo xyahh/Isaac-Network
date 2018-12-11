@@ -143,24 +143,29 @@ void Network::testFunc()
 {
 	SOCKET client_sock = clientSockets[CurrentClientNum++];
 	while (1) {
-		SOCKADDR_IN clientaddr;
-		int addrlen;
-		addrlen = sizeof(clientaddr);
-		getpeername(client_sock, (SOCKADDR *)&clientaddr, &addrlen);
+		static float FixedRecvTime = 0;
+		FixedRecvTime += UPDATE_TIME;
+		if (FixedRecvTime >= 1.0 / 30.f)
+		{
+			SOCKADDR_IN clientaddr;
+			int addrlen;
+			addrlen = sizeof(clientaddr);
+			getpeername(client_sock, (SOCKADDR *)&clientaddr, &addrlen);
 
-		int retval = 0;
+			int retval = 0;
 
-		KeyData k = { 0, };
-		retval = recv(client_sock, (char *)&k, sizeof(k), 0);
-		if (retval == SOCKET_ERROR) {
-			err_display(const_cast<char*>("recv()"));
-			closesocket(client_sock);
-			continue;
+			KeyData k = { 0, };
+			retval = recv(client_sock, (char *)&k, sizeof(k), 0);
+			if (retval == SOCKET_ERROR) {
+				err_display(const_cast<char*>("recv()"));
+				closesocket(client_sock);
+				continue;
+			}
+			// 스레드별로 변수 필요함 (순서 0, 1, 2 처럼) = clientNum 
+			// 받은 key 큐에다 넣기 
+			//STD cout << k.key << "\t" << k.pressed << "\t" << k.clientNum << STD endl;
+			InputQueue.push(k);
 		}
-		// 스레드별로 변수 필요함 (순서 0, 1, 2 처럼) = clientNum 
-		// 받은 key 큐에다 넣기 
-		STD cout << k.key << "\t" << k.pressed << "\t" << k.clientNum << STD endl;
-		InputQueue.push(k);
 	}
 
 	//	#pragma region 최우진 코드

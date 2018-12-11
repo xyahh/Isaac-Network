@@ -207,17 +207,22 @@ void Network::ReceiveRenderData()
 {
 	while (1)
 	{
-		retval = recvn(Nw.clientSock, (char*)&vecSize, sizeof(int), 0);
-		if (retval == SOCKET_ERROR) {
-			err_display(const_cast<char*>("recv()"));
-			exit(0);
-		}
+		static float FixedRecvTime = 0;
+		FixedRecvTime += UPDATE_TIME;
+		if (FixedRecvTime >= 1.0 / 30.f)
+		{
+			retval = recvn(Nw.clientSock, (char*)&vecSize, sizeof(int), 0);
+			if (retval == SOCKET_ERROR) {
+				err_display(const_cast<char*>("recv()"));
+				exit(0);
+			}
 
-		rendererData.resize(vecSize);
-		retval = recvn(clientSock, (char*)&rendererData[0], sizeof(RenderData) * vecSize, 0);
-		if (retval == SOCKET_ERROR) {
-			err_display(const_cast<char*>("recv()"));
-			exit(0);
+			rendererData.resize(vecSize);
+			retval = recvn(clientSock, (char*)&rendererData[0], sizeof(RenderData) * vecSize, 0);
+			if (retval == SOCKET_ERROR) {
+				err_display(const_cast<char*>("recv()"));
+				exit(0);
+			}
 		}
 	}
 }

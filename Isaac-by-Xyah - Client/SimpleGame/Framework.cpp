@@ -131,38 +131,41 @@ void Framework::Keyboard()
 {
 	while (1) 
 	{
-
-		for (auto& i : Inputs)
+		static float FixedSendTime = 0;
+		FixedSendTime += UPDATE_TIME;
+		if (FixedSendTime >= 1.0 / 30.f)
 		{
-			if (IS_PRESSED(i.first))
+			for (auto& i : Inputs)
 			{
-				if (!i.second.pressed)
+				if (IS_PRESSED(i.first))
+				{
+					if (!i.second.pressed)
+					{
+						KeyData k;
+						k.key = i.first;
+						k.pressed = true;
+						k.clientNum = Nw.ClientNum;
+						Nw.SendInput(k);
+						i.second.pressed = true;
+						i.second.released = false;
+						//STD cout << k.key << " " << k.pressed << STD endl;
+					}
+
+				}
+				else if (!i.second.released && i.second.pressed)
 				{
 					KeyData k;
 					k.key = i.first;
-					k.pressed = true;
+					k.pressed = false;
 					k.clientNum = Nw.ClientNum;
 					Nw.SendInput(k);
-					i.second.pressed = true;
-					i.second.released = false;
-					STD cout << k.key << " " << k.pressed << STD endl;
+					i.second.released = true;
+					i.second.pressed = false;
+					//	STD cout << k.key << " " << k.pressed << " " << k.clientNum <<  STD endl;
 				}
 
 			}
-			else if (!i.second.released && i.second.pressed)
-			{
-				KeyData k;
-				k.key = i.first;
-				k.pressed = false;
-				k.clientNum = Nw.ClientNum;
-				Nw.SendInput(k);
-				i.second.released = true;
-				i.second.pressed = false;
-				STD cout << k.key << " " << k.pressed << " " << k.clientNum <<  STD endl;
-			}
-
 		}
-
 		// temparary clientNum is 0, later we should get clientNum from server (Lobby Scene)
 
 	}

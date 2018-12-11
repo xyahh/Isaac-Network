@@ -11,6 +11,20 @@ void Gameplay::Enter()
 	Engine.AddSound(&SOUND_TEST, "./Resources/Sounds/Main.mp3", true);
 	Engine.GetSound(SOUND_TEST).Play();
 
+	size_t NULL_STATE;
+	//Actor States
+	{
+		Engine.AddStatePrototype<NullState>(&NULL_STATE);
+		Engine.AddStatePrototype<IdleState>(&ST::IDLE);
+		Engine.AddStatePrototype<MoveState>(&ST::MOVE);
+		Engine.AddStatePrototype<InAirState>(&ST::IN_AIR, 0.0f);
+		Engine.AddStatePrototype<ChargeJumpState>(&ST::CHARGE_JUMP, 1.f, 40'000.f);
+		Engine.AddStatePrototype<ChargeSlamState>(&ST::CHARGE_SLAM, 1.f);
+		Engine.AddStatePrototype<SlamState>(&ST::SLAM, 200'000.f);
+		Engine.AddStatePrototype<ShootState>(&ST::SHOOT, TEX::TEAR, 5.f, 2'000.f);
+		Engine.AddStatePrototype<DamagedState>(&ST::DAMAGED, 2.f, 10.f);
+	}
+
 	//Actor
 	{
 		Engine.AddObject(&OBJ::PLAYER);
@@ -25,9 +39,8 @@ void Gameplay::Enter()
 		ActorDescriptor.AddEvent(DescriptorEvent::ValueZeroNegative, []()
 		{
 			STD cout << "Player1 Died!\n";
-			Engine.DeleteObject(OBJ::PLAYER);
+			Engine.GetGraphics(OBJ::PLAYER).SetAlpha(0.f);
 		});
-
 		ActorPhysics.SetCollision(&Collision::Actor);
 		ActorPhysics.Box().SetDimensions({ 0.5f, 0.25f, 1.5f });
 		ActorPhysics.SetPosition({ 0.f, 5.f, 0.f });
@@ -69,10 +82,11 @@ void Gameplay::Enter()
 		ActorDescriptor.Type = (ObjectType::Actor);
 		ActorDescriptor.Value = (100.f); // 100 HP
 		ActorDescriptor.Team = OBJ::PLAYER2;
+		
 		ActorDescriptor.AddEvent(DescriptorEvent::ValueZeroNegative, []()
 		{
 			STD cout << "Player2 Died!\n";
-			Engine.DeleteObject(OBJ::PLAYER2);
+			Engine.GetGraphics(OBJ::PLAYER2).SetAlpha(0.f);
 		});
 
 		ActorPhysics.SetCollision(&Collision::Actor);
@@ -119,9 +133,8 @@ void Gameplay::Enter()
 		ActorDescriptor.AddEvent(DescriptorEvent::ValueZeroNegative, []()
 		{
 			STD cout << "Player3 Died!\n";
-			Engine.DeleteObject(OBJ::PLAYER3);
+			Engine.GetGraphics(OBJ::PLAYER3).SetAlpha(0.f);
 		});
-
 		ActorPhysics.SetCollision(&Collision::Actor);
 		ActorPhysics.Box().SetDimensions({ 0.5f, 0.25f, 1.5f });
 		ActorPhysics.SetPosition({ 7.f, 7.f, 0.f });
@@ -149,18 +162,7 @@ void Gameplay::Enter()
 		Head.SetDirection(Direction::Down);
 		Head.SetOffset({ 0.f, 0.f, BodySize * 0.5f + HeadSize * 0.5f });
 	}
-
-	//Actor States
-	{
-		Engine.AddStatePrototype<IdleState>(&ST::IDLE);
-		Engine.AddStatePrototype<MoveState>(&ST::MOVE);
-		Engine.AddStatePrototype<InAirState>(&ST::IN_AIR, 0.0f);
-		Engine.AddStatePrototype<ChargeJumpState>(&ST::CHARGE_JUMP, 1.f, 40'000.f);
-		Engine.AddStatePrototype<ChargeSlamState>(&ST::CHARGE_SLAM, 1.f);
-		Engine.AddStatePrototype<SlamState>(&ST::SLAM, 200'000.f);
-		Engine.AddStatePrototype<ShootState>(&ST::SHOOT, TEX::TEAR, 5.f, 2'000.f);
-		Engine.AddStatePrototype<DamagedState>(&ST::DAMAGED, 2.f, 10.f);
-	}
+	
 
 	//Commands
 	{
@@ -427,7 +429,7 @@ void Gameplay::Enter()
 		TestDesc.Value = (0.2f); //Friction
 
 		Physics& ObjPhysics = Engine.GetPhysics(TestObj);
-		ObjPhysics.Box().SetDimensions({ 2.f, 20.f, 2.f });
+		ObjPhysics.Box().SetDimensions({ 2.f, 20.f, 20.f });
 		ObjPhysics.SetCollision(&Collision::Basic);
 		ObjPhysics.SetPosition({ -10.f, 0.f, 0.f });
 	}
@@ -443,7 +445,7 @@ void Gameplay::Enter()
 		TestDesc.Value = (0.2f); //Friction
 
 		Physics& ObjPhysics = Engine.GetPhysics(TestObj);
-		ObjPhysics.Box().SetDimensions({ 20.f, 2.f, 2.f });
+		ObjPhysics.Box().SetDimensions({ 20.f, 2.f, 20.f });
 		ObjPhysics.SetCollision(&Collision::Basic);
 		ObjPhysics.SetPosition({ 0.f, 9.f, 0.f });
 	}
@@ -460,7 +462,7 @@ void Gameplay::Enter()
 		TestDesc.Value = (0.2f); //Friction
 
 		Physics& ObjPhysics = Engine.GetPhysics(TesObj);
-		ObjPhysics.Box().SetDimensions({ 2.f, 20.f, 2.f });
+		ObjPhysics.Box().SetDimensions({ 2.f, 20.f, 20.f });
 		ObjPhysics.SetCollision(&Collision::Basic);
 		ObjPhysics.SetPosition({ 10.f, 0.f, 0.f });
 	}
@@ -476,7 +478,7 @@ void Gameplay::Enter()
 		TestDesc.Value = (0.2f); //Friction
 
 		Physics& ObjPhysics = Engine.GetPhysics(TesObj);
-		ObjPhysics.Box().SetDimensions({ 20.f, 2.f, 2.f });
+		ObjPhysics.Box().SetDimensions({ 20.f, 2.f, 20.f });
 		ObjPhysics.SetCollision(&Collision::Basic);
 		ObjPhysics.SetPosition({ 0.f, -9.f, 0.f });
 	}

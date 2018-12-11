@@ -51,7 +51,7 @@ void Graphics::Render (
 		dataSet2.SpriteSize = DX2 Store(Sprite.GetSize());
 
 		dataSet.RenderDataSet[idx++] = dataSet2;
-		RenderDevice.DrawShadow(Position, Sprite.GetSize(), Color);
+		/*RenderDevice.DrawShadow(Position, Sprite.GetSize(), Color);
 		RenderDevice.DrawSprite
 		(
 			DX Add(Position, SpriteOffset)
@@ -60,7 +60,7 @@ void Graphics::Render (
 			, Engine.GetTexture(Sprite.GetTexture())
 			, Sprite.GetCurrent()
 			, Sprite.GetTotal()
-		);
+		);*/
 	}
 	dataSet.Color = DX4 Store(Color);
 	//DX Print(Position);
